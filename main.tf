@@ -34,3 +34,25 @@ resource "nomad_job" "nomad-job-postgres" {
   jobspec = data.template_file.template-nomad-job-postgres.rendered
   detach  = false
 }
+
+resource "vault_mount" "db" {
+  path = "postgres"
+  type = "database"
+}
+
+resource "vault_database_secret_backend_connection" "postgres" {
+  backend       = "${vault_mount.db.path}"
+  name          = "postgres"
+  allowed_roles = ["dev", "prod"]
+
+  postgresql {
+    connection_url = "postgres://hive:hive@127.0.0.1:5432/postgres?sslmode=disable"
+  }
+}
+
+resource "vault_database_secret_backend_role" "role" {
+  backend             = "${vault_mount.db.path}"
+  name                = "my-role"
+  db_name             = "${vault_database_secret_backend_connection.postgres.name}"
+  creation_statements = ["CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}';"]
+}

@@ -58,7 +58,9 @@ job "${service_name}" {
         change_mode = "noop"
         env         = true
         data        = <<EOF
-${envs}
+POSTGRES_DB="metastore"
+POSTGRES_USER="{{ with secret "database/creds/my-role" }}{{.Data.username}}{{end}}"
+POSTGRES_PASSWORD="{{ with secret "database/creds/my-role" }}{{.Data.password}}{{end}}"
 EOF
       }
     }
