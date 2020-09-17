@@ -35,24 +35,34 @@ resource "nomad_job" "nomad-job-postgres" {
   detach  = false
 }
 
+
+data "template_file" "template-nomad-job-unsafe_connection" {
+  template = file("${path.module}/conf/nomad/unsafe_connection.hcl")
+}
+
+resource "nomad_job" "nomad-job-unsafe_connection" {
+  jobspec = data.template_file.template-nomad-job-unsafe_connection.rendered
+  detach = false
+}
+
 resource "vault_mount" "db" {
   path = "postgres"
   type = "database"
 }
 
 resource "vault_database_secret_backend_connection" "postgres" {
-  backend       = "${vault_mount.db.path}"
+  backend       = vault_mount.db.path
   name          = "postgres"
   allowed_roles = ["dev", "prod"]
 
   postgresql {
-    connection_url = "postgres://hive:hive@127.0.0.1:5432/postgres?sslmode=disable"
+    connection_url = "postgres://hive:hive@127.0.0.1:4567/postgres?sslmode=disable"
   }
 }
 
 resource "vault_database_secret_backend_role" "role" {
-  backend             = "${vault_mount.db.path}"
+  backend             = vault_mount.db.path
   name                = "my-role"
-  db_name             = "${vault_database_secret_backend_connection.postgres.name}"
+  db_name             = vault_database_secret_backend_connection.postgres.name
   creation_statements = ["CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}';"]
 }

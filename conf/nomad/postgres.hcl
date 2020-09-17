@@ -38,7 +38,6 @@ job "${service_name}" {
       connect {
         sidecar_service {}
       }
-
     }
 
     task "postgresql" {
@@ -58,11 +57,13 @@ job "${service_name}" {
         change_mode = "noop"
         env         = true
         data        = <<EOF
-POSTGRES_DB="metastore"
-POSTGRES_USER="{{ with secret "database/creds/my-role" }}{{.Data.username}}{{end}}"
-POSTGRES_PASSWORD="{{ with secret "database/creds/my-role" }}{{.Data.password}}{{end}}"
+${envs}
 EOF
       }
     }
   }
 }
+
+//POSTGRES_DB="metastore"
+//POSTGRES_USER="{{ with secret "postgres/creds/my-role" }}{{.Data.username}}{{end}}"
+//POSTGRES_PASSWORD="{{ with secret "postgres/creds/my-role" }}{{.Data.password}}{{end}}"
