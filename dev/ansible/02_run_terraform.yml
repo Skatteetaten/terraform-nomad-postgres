@@ -1,3 +1,17 @@
+- name: Download Terraform Latest
+  become: yes
+  get_url:
+      url: https://releases.hashicorp.com/terraform/0.13.3/terraform_0.13.3_linux_amd64.zip
+      dest: /tmp
+      mode: 0755
+
+- name: Unarchive a file that is already on the remote machine
+  become: yes
+  unarchive:
+      src: /tmp/terraform_0.13.3_linux_amd64.zip
+      dest: /usr/local/bin
+      remote_src: yes
+
 - name: Terraform
   terraform:
     project_path: ../../example
