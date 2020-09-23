@@ -18,25 +18,3 @@ module "postgres" {
   postgres_database                        = "metastore"
   postgres_container_environment_variables = ["PGDATA=/var/lib/postgresql/data"]
 }
-
-output "postgres_service_name"{
-  description = "Postgres service name"
-  value       = module.postgres.service_name
-}
-
-output "postgres_db_name"{
-  description = "Postgres database name"
-  value       = module.postgres.database_name
-}
-
-output "postgres_username" {
-  description = "Postgres username"
-  value       = data.vault_generic_secret.postgres_secrets.data.username
-  sensitive   = true
-}
-
-output "postgres_password" {
-  description = "Postgres password"
-  value       = data.vault_generic_secret.postgres_secrets.data.password
-  sensitive   = true
-}
