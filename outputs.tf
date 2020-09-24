@@ -6,11 +6,13 @@ output "service_name" {
 output "username" {
   description = "Postgres username"
   value       = data.template_file.template-nomad-job-postgres.vars.username
+  sensitive = true
 }
 
 output "password" {
   description = "Postgres password"
   value       = data.template_file.template-nomad-job-postgres.vars.password
+  sensitive = true
 }
 
 output "database_name" {
