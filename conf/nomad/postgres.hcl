@@ -22,10 +22,16 @@ job "${service_name}" {
       mode = "bridge"
     }
 
+    volume "persistence" {
+      type      = "host"
+      source    = "persistence"
+      read_only = false
+    }
+
+
     service {
       name = "${service_name}"
       port = "${port}"
-
       check {
         type      = "script"
         task      = "postgresql"
@@ -44,6 +50,12 @@ job "${service_name}" {
     task "postgresql" {
       driver = "docker"
 
+      volume_mount {
+        volume      = "persistence"
+        destination = "/var/lib/postgresql/"
+        read_only   = false
+      }
+
       config {
         image = "${image}"
       }
@@ -52,6 +64,7 @@ job "${service_name}" {
         max_files     = 10
         max_file_size = 2
       }
+
 
       template {
         destination = "local/secrets/.envs"
