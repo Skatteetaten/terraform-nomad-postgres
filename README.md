@@ -1,8 +1,39 @@
-# terraform-nomad-postgres
+<!-- markdownlint-disable MD041 -->
+<p align="center"><a href="https://github.com/fredrikhgrelland/vagrant-hashistack-template" alt="Built on"><img src="https://img.shields.io/badge/Built%20from%20template-Vagrant--hashistack--template-blue?style=for-the-badge&logo=github"/></a><p align="center"><a href="https://github.com/fredrikhgrelland/vagrant-hashistack" alt="Built on"><img src="https://img.shields.io/badge/Powered%20by%20-Vagrant--hashistack-orange?style=for-the-badge&logo=vagrant"/></a></p></p>
 
+# Terraform-nomad-postgres
+This module is IaC - infrastructure as code which contains a nomad job of [postgres](https://www.postgresql.org/).
+
+## Usage
 ```text
 make test
 ```
+The command will run a standalone instance of postgres in the [example]() folder.
+
+## Requirements
+### Required software
+- [GNU make](https://man7.org/linux/man-pages/man1/make.1.html)
+
+### Providers
+- [Nomad](https://registry.terraform.io/providers/hashicorp/nomad/latest/docs)
+
+## Inputs
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| nomad\_datacenters | Nomad data centers | list(string) | ["dc1"] | yes |
+| nomad\_namespace | [Enterprise] Nomad namespace | string | "default" | yes |
+| service\_name | Postgres service name | string | "postgres" | yes |
+| container\_port | Postgres port | number | 5432 | yes |
+| container\_image | Postgres docker image | string | "postgres:12-alpine" | yes |
+| admin\_user | Postgres admin username | string or data obj | data.vault_generic_secret.postgres_secrets.data.username | yes |
+| admin\_password | Postgres admin password | string or data obj | data.vault_generic_secret.postgres_secrets.data.password | yes |
+| admin\_password | Postgres database name | string | "metastore" | yes |
+| container\_environment\_variables | Postgres container environement variables | list(string) | ["PGDATA=/var/lib/postgresql/data"] | yes |
+
+## Outputs
+| Name | Description | Type |
+|------|-------------|------|
+
 
 ## Vault secrets
 The postegres username and password is generated and put in `/secret/postgres` inside Vault.
