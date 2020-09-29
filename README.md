@@ -41,7 +41,7 @@ The command will run a standalone instance of postgres found in the [example](/e
 | port | Postgres port | number |
 
 ## Example usage
-The example-code shows the minimum of what you need to use this module. 
+The example-code shows the minimum of what you need to use this module.
 
 ```hcl-terraform
 module "postgres" {
