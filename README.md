@@ -13,6 +13,7 @@ The command will run a standalone instance of postgres found in the [example](/e
 ## Requirements
 ### Required software
 - [GNU make](https://man7.org/linux/man-pages/man1/make.1.html)
+- [Docker](https://www.docker.com/)
 
 ### Providers
 - [Nomad](https://registry.terraform.io/providers/hashicorp/nomad/latest/docs)
@@ -62,7 +63,7 @@ module "postgres" {
 ```
 
 ### Verifying setup
-You can verify that postgres is running by checking the connection. This can be done using the `consul` binary to set up a proxy. Check out the [required software](#required-software) section.
+You can verify that postgres is running by checking the connection. This can be done using the `consul` docker image to set up a proxy. Check out the [required software](#required-software) section.
 ```shell script
 make proxy-to-postgres
 ```
