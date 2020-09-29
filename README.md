@@ -64,13 +64,13 @@ module "postgres" {
   nomad_namespace   = "default"
 
   # postgres
-  postgres_service_name                    = "postgres"
-  postgres_container_image                 = "postgres:12-alpine"
-  postgres_container_port                  = 5432
-  postgres_admin_user                      = "postgres"
-  postgres_admin_password                  = "postgres"
-  postgres_database                        = "metastore"
-  postgres_container_environment_variables = ["PGDATA=/var/lib/postgresql/data"]
+  service_name                    = "postgres"
+  container_image                 = "postgres:12-alpine"
+  container_port                  = 5432
+  admin_user                      = "postgres"
+  admin_password                  = "postgres"
+  database                        = "metastore"
+  container_environment_variables = ["PGDATA=/var/lib/postgresql/data"]
 }
 ```
 
