@@ -4,6 +4,18 @@
 # Terraform-nomad-postgres
 This module is IaC - infrastructure as code which contains a nomad job of [postgres](https://www.postgresql.org/).
 
+## Content
+1. [Usage](#usage)
+2. [Requirements](#requirements)
+    1. [Required software](#required-software)
+    2. [Providers](#providers)
+3. [Inputs](#inputs)
+4. [Outputs](#outputs)
+5. [Example usage](#example-usage)
+    1. [Verifying setup](#verifying-setup)
+6. [Vault secrets](#vault-secrets)
+7. [License](#license)
+
 ## Usage
 ```text
 make test
