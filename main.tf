@@ -1,5 +1,4 @@
 locals {
-
   datacenters = join(",", var.nomad_datacenters)
   postgres_env_vars = join("\n",
     concat([
@@ -8,7 +7,6 @@ locals {
       "POSTGRES_PASSWORD=${var.postgres_admin_password}"
     ], var.postgres_container_environment_variables)
   )
-
 }
 
 data "template_file" "template-nomad-job-postgres" {
@@ -24,10 +22,8 @@ data "template_file" "template-nomad-job-postgres" {
     username     = var.postgres_admin_user
     password     = var.postgres_admin_password
     database     = var.postgres_database
-
     envs = local.postgres_env_vars
   }
-
 }
 
 resource "nomad_job" "nomad-job-postgres" {
