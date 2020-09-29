@@ -38,7 +38,7 @@ The command will run a standalone instance of postgres found in the [example](/e
 | username | Postgres username | string |
 | password | Postgres password | string |
 | database\_name | Postgres database name | string |
-| port | Postgres port | number | 
+| port | Postgres port | number |
 
 ## Example usage
 The example-code shows the minimum of what you need to use this module. 
