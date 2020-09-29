@@ -1,0 +1,9 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: Create a directory if it does not exist
+    file:
+      path: /vagrant/persistence/postgres/pgdata
+      state: directory
+      mode: '0777'
