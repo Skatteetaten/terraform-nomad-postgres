@@ -8,7 +8,7 @@ This module is IaC - infrastructure as code which contains a nomad job of [postg
 ```text
 make test
 ```
-The command will run a standalone instance of postgres found in the [example]() folder.
+The command will run a standalone instance of postgres found in the [example](/example) folder.
 
 ## Requirements
 ### Required software
