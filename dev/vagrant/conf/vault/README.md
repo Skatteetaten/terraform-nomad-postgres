@@ -7,3 +7,4 @@ Adding a file `99-override.hcl` you will ensure it will be appended last, and 00
 Any valid configuration from [https://www.vaultproject.io/docs/configuration](https://www.vaultproject.io/docs/configuration) will work.
 
 See [example](../../../../test_example/dev/vagrant/conf/vault/99-override.hcl)
+See [example](../../../../template_example/dev/vagrant/conf/vault/99-override.hcl)

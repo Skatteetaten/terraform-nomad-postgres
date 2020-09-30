@@ -13,3 +13,5 @@ The files e.g. 0-example.yml must only include pure ansible task syntax:
 ```
 
 See [example](../../../../test_example/dev/vagrant/conf/pre_bootstrap/00-prestart-example.yml)
+See [example](../../../../template_example/dev/vagrant/conf/pre_bootstrap/00-prestart-example.yml)
+

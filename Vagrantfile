@@ -10,3 +10,6 @@ Vagrant.configure("2") do |config|
         ansible.playbook = "playbook.yml" # Note this playbook is, in this context, /ansible/playbook.yml
     end
 end
+default_vagrantfile = "Vagrantfile.default"
+load default_vagrantfile if File.exists?(default_vagrantfile)
+
