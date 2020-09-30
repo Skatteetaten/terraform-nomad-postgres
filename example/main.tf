@@ -10,11 +10,11 @@ module "postgres" {
   nomad_namespace   = "default"
 
   # postgres
-  postgres_service_name                    = "postgres"
-  postgres_container_image                 = "postgres:12-alpine"
-  postgres_container_port                  = 5432
-  postgres_admin_user                      = data.vault_generic_secret.postgres_secrets.data.username
-  postgres_admin_password                  = data.vault_generic_secret.postgres_secrets.data.password
-  postgres_database                        = "metastore"
-  postgres_container_environment_variables = ["PGDATA=/var/lib/postgresql/data"]
+  service_name                    = "postgres"
+  container_image                 = "postgres:12-alpine"
+  container_port                  = 5432
+  admin_user                      = data.vault_generic_secret.postgres_secrets.data.username
+  admin_password                  = data.vault_generic_secret.postgres_secrets.data.password
+  database                        = "metastore"
+  container_environment_variables = ["PGDATA=/var/lib/postgresql/data"]
 }
