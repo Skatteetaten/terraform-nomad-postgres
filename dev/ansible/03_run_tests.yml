@@ -1,0 +1,12 @@
+- name: Postgres healthchecks pass
+  uri:
+    url: http://localhost:8500/v1/health/checks/postgres?filter={{ '(Status=="passing")' | urlencode }}
+    method: GET
+    return_content: yes
+    status_code: 200
+    body_format: json
+  register: result_postgres
+  retries: 15
+  delay: 15
+  until: result_postgres.json | length == 1
+  tags: test

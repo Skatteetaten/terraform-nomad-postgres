@@ -5,6 +5,7 @@
 ### Added
 
 - Using Vault to generate username and password for postgres with kv #13
+- Added 03_run_tests.yml #3
 
 ## [0.0.1]
 
