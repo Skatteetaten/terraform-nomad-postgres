@@ -22,7 +22,7 @@ job "postgres" {
       mode = "bridge"
     }
 
-    volume "persistence" {
+    volume "persistence-point-to-tmp2" {
       type      = "host"
       source    = "persistence"
       read_only = false
@@ -51,20 +51,36 @@ job "postgres" {
       driver = "docker"
 
       volume_mount {
-        volume      = "persistence"
-        destination = "/var/lib/postgresql/data/"
+        volume      = "persistence-point-to-tmp2"
+        destination = "/var/lib/postgresql/"
         read_only   = false
       }
 
       config {
         image = "postgres:12-alpine"
+//        volumes = ["postgres/:/postgres/"]
+
+//        command = "/bin/bash"
+//        args = [
+//          "-c",
+//          "mkdir /var/lib/postgresql/data/pgdata && echo \"Succ\" || echo \"Failed 1\"",
+//          "mkdir /var/lib/postgresql/data/lul && echo \"Succ\" || echo \"Failed 1\"",
+////          "chomod -R a+rwx /var/lib/postgresql/data/pgdata"
+//          ]
+//          "echo \"Hello World\" > file1.txt && echo \"Success\" || echo \"Failed\""
+//          "echo \"while true; do cp -R /var/lib/postgresql/data/pgdata var/lib/postgresql && echo \"Sucsess copying\" || echo \"Failed copying\"; sleep 5; done\" > script.sh",
+//          "sh script.sh &"
+////          "chmod -R a+rwx /var/lib/postgresql/data/ && echo \"Success chmod\" || echo \"Error chmod\"",
+////          "mkdir var/lib/postgresql/test_pgdata",
+//          "for VAL in {1..5}; do cp -R /var/lib/postgresql/data/pgdata var/lib/postgresql && echo \"Sucsess copying $VAL\" || echo \"Failed copying $VAL\"; sleep 5; done",
+//          "&"
+//        ]
       }
 
       logs {
         max_files     = 10
         max_file_size = 2
       }
-
 
       template {
         destination = "local/secrets/.envs"
@@ -74,7 +90,7 @@ job "postgres" {
 POSTGRES_DB="hive"
 POSTGRES_USER="hive"
 POSTGRES_PASSWORD="hive"
-PGDATA="/var/lib/postgresql/data/pgdata"
+PGDATA=/var/lib/postgresql
 EOF
       }
     }

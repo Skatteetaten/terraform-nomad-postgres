@@ -65,7 +65,6 @@ job "${service_name}" {
         max_file_size = 2
       }
 
-
       template {
         destination = "local/secrets/.envs"
         change_mode = "noop"
