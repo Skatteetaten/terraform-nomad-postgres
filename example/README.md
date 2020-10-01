@@ -2,7 +2,7 @@
 
 
 TODO: explain
-=======
+
 All examples have their own directories, with a `main.tf` that references one or more modules. See [template_example](../template_example/example/standalone).
 
 ## References
