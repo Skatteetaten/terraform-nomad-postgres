@@ -14,7 +14,7 @@ for key in env_keys:
 
 with open(str(os.environ.get("GITHUB_WORKSPACE")) + "/" + str(os.environ.get("FILE_NAME")), "w") as text_file:
     text_file.write(out_file)
-filepath
+
 with open(filepath, "w") as text_file:
     text_file.write(out_file)
 
