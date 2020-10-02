@@ -1,9 +1,4 @@
 # Nomad
-variable "nomad_provider_address" {
-  type        = string
-  description = "Nomad address"
-  default     = "http://127.0.0.1:4646"
-}
 variable "nomad_datacenters" {
   type        = list(string)
   description = "Nomad data centers"
@@ -16,41 +11,41 @@ variable "nomad_namespace" {
 }
 
 # Postgres
-variable "postgres_service_name" {
+variable "service_name" {
   type        = string
   description = "Postgres service name"
   default     = "postgres"
 }
 
-variable "postgres_container_image" {
+variable "container_image" {
   type        = string
   description = "Postgres docker image"
   default     = "postgres:12-alpine"
 }
 
-variable "postgres_container_port" {
+variable "container_port" {
   type        = number
   description = "Postgres port"
   default     = 5432
 }
 
-variable "postgres_admin_user" {
+variable "admin_user" {
   type        = string
   description = "Postgres admin user"
 }
 
-variable "postgres_admin_password" {
+variable "admin_password" {
   type        = string
   description = "Postgres admin password"
 }
 
-variable "postgres_database" {
+variable "database" {
   type        = string
   description = "Postgres database on init"
 }
 
 # https://github.com/docker-library/docs/blob/master/postgres/README.md#environment-variables
-variable "postgres_container_environment_variables" {
+variable "container_environment_variables" {
   type        = list(string)
   description = "Postgres server environment variables"
   default     = ["PGDATA=/var/lib/postgresql/data"]
