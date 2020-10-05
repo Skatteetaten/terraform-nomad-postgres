@@ -6,5 +6,5 @@ terraform.tfstate*
 .minio.sys
 tmp
 docker/conf/certificates/*.crt
-persistence/postgres/data
 *.log
+super-linter.log

@@ -9,7 +9,7 @@ locals {
   )
 }
 
-data "template_file" "template-nomad-job-postgres" {
+data "template_file" "template_nomad_job_postgres" {
   template = file("${path.module}/conf/nomad/postgres.hcl")
   vars = {
     service_name = var.service_name
@@ -27,7 +27,7 @@ data "template_file" "template-nomad-job-postgres" {
   }
 }
 
-resource "nomad_job" "nomad-job-postgres" {
-  jobspec = data.template_file.template-nomad-job-postgres.rendered
+resource "nomad_job" "nomad_job_postgres" {
+  jobspec = data.template_file.template_nomad_job_postgres.rendered
   detach  = false
 }
