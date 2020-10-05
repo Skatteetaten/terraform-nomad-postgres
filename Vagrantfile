@@ -1,8 +1,8 @@
 Vagrant.configure("2") do |config|
     config.vm.box = "fredrikhgrelland/hashistack"
     config.vm.box_version = ">= 0.4, < 0.5"
-    config.vm.synced_folder "./persistence", "/tmp2",
-      owner: "root", group: "root"
+#     config.vm.synced_folder "./persistence", "/tmp2",
+#       owner: "root", group: "root"
     config.vm.provider "virtualbox" do |vb|
         vb.linked_clone = true
         vb.memory = 2048

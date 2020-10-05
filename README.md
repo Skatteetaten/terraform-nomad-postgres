@@ -4,9 +4,16 @@
 make test
 ```
 
+## Inputs
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| nomad\_host\_volume | Nomad host volume name | string | "persistence" | No |
+| volume\_destination | Postgres volume destination | string | "/var/lib/postgresql/data" | No |
+| use\_host\_volume | Use nomad host volume | bool | false | No |
+
 ## Volumes
 We are using [host volume](https://www.nomadproject.io/docs/job-specification/volume) to store postgres data.
-Postgres data will now be available in the `persistence/postgres` folder.
+If the `use_host_volume` is set to `true`, Postgres data will be available in root `/persistence/postgres` folder inside the Vagrant box.
 
 ## Vault secrets
 The postegres username and password is generated and put in `/secret/postgres` inside Vault.

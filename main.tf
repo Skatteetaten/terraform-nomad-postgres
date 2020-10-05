@@ -20,6 +20,9 @@ data "template_file" "template-nomad-job-postgres" {
     username     = var.admin_user
     password     = var.admin_password
     database     = var.database
+    nomad_host_volume  = var.nomad_host_volume
+    volume_destination = var.volume_destination
+    use_host_volume = var.use_host_volume
     envs = local.postgres_env_vars
   }
 }

@@ -1,6 +1,6 @@
 client {
   host_volume "persistence" {
-    path = "/tmp2"
+    path = "/persistence/postgres"
     read_only = false
   }
 }

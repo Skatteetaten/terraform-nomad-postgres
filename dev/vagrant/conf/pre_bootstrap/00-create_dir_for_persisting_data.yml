@@ -1,5 +1,5 @@
-- name: Create directory /persistence/minio for persisting minio data
+- name: Create directory /persistence/postrges for persisting postrges data
   file:
-      path: /vagrant/persistence/postgres
+      path: /persistence/postgres
       state: directory
       mode: '0777'

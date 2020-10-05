@@ -14,6 +14,11 @@ variable "nomad_namespace" {
   description = "[Enterprise] Nomad namespace"
   default     = "default"
 }
+variable "nomad_host_volume" {
+  type        = string
+  description = "Nomad Host Volume"
+  default     = "persistence"
+}
 
 # Postgres
 variable "service_name" {
@@ -56,3 +61,14 @@ variable "container_environment_variables" {
   default     = ["PGDATA=/var/lib/postgresql/data"]
 }
 
+variable "volume_destination" {
+  type = string
+  description = "Postes volume destination"
+  default = "/var/lib/postgresql/data"
+}
+
+variable "use_host_volume" {
+  type        = bool
+  description = "Switch for nomad jobs to use host volume feature"
+  default     = false
+}
