@@ -35,18 +35,18 @@ The command will run a standalone instance of postgres found in the [example](/e
 ## Inputs
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| nomad\_datacenters | Nomad data centers | list(string) | ["dc1"] | yes |
-| nomad\_namespace | [Enterprise] Nomad namespace | string | "default" | yes |
-| nomad\_host\_volume | Nomad host volume name | string | "persistence" | yes |
-| service\_name | Postgres service name | string | "postgres" | yes |
-| container\_port | Postgres port | number | 5432 | yes |
-| container\_image | Postgres docker image | string | "postgres:12-alpine" | yes |
-| admin\_user | Postgres admin username | string or data obj | data.vault_generic_secret.postgres_secrets.data.username | yes |
-| admin\_password | Postgres admin password | string or data obj | data.vault_generic_secret.postgres_secrets.data.password | yes |
-| admin\_password | Postgres database name | string | "metastore" | yes |
-| container\_environment\_variables | Postgres container environement variables | list(string) | ["PGDATA=/var/lib/postgresql/data"] | yes |
-| volume\_destination | Postgres volume destination | string | "/var/lib/postgresql/data" | yes |
-| use\_host\_volume | Use nomad host volume | bool | false | yes< |
+| nomad\_datacenters | Nomad data centers | list(string) | ["dc1"] | no |
+| nomad\_namespace | [Enterprise] Nomad namespace | string | "default" | no |
+| nomad\_host\_volume | Nomad host volume name | string | "persistence" | no |
+| service\_name | Postgres service name | string | "postgres" | no |
+| container\_port | Postgres port | number | 5432 | no |
+| container\_image | Postgres docker image | string | "postgres:12-alpine" | no |
+| admin\_user | Postgres admin username | string or data obj | "postgres" | yes |
+| admin\_password | Postgres admin password | string or data obj | "postgres" | yes |
+| admin\_password | Postgres database name | string | "metastore" | yes |
+| container\_environment\_variables | Postgres container environement variables | list(string) | ["PGDATA=/var/lib/postgresql/data"] | no |
+| volume\_destination | Postgres volume destination | string | "/var/lib/postgresql/data" | no |
+| use\_host\_volume | Use nomad host volume | bool | false | no |
 
 ## Outputs
 | Name | Description | Type |

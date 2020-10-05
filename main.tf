@@ -12,18 +12,18 @@ locals {
 data "template_file" "template_nomad_job_postgres" {
   template = file("${path.module}/conf/nomad/postgres.hcl")
   vars = {
-    service_name = var.service_name
-    datacenters  = local.datacenters
-    namespace    = var.nomad_namespace
-    image        = var.container_image
-    port         = var.container_port
-    username     = var.admin_user
-    password     = var.admin_password
-    database     = var.database
+    service_name       = var.service_name
+    datacenters        = local.datacenters
+    namespace          = var.nomad_namespace
+    image              = var.container_image
+    port               = var.container_port
+    username           = var.admin_user
+    password           = var.admin_password
+    database           = var.database
     nomad_host_volume  = var.nomad_host_volume
     volume_destination = var.volume_destination
-    use_host_volume = var.use_host_volume
-    envs = local.postgres_env_vars
+    use_host_volume    = var.use_host_volume
+    envs               = local.postgres_env_vars
   }
 }
 
