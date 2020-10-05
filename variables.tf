@@ -58,7 +58,7 @@ variable "container_environment_variables" {
 
 variable "volume_destination" {
   type        = string
-  description = "Postes volume destination"
+  description = "Postgres volume destination"
   default     = "/var/lib/postgresql/data"
 }
 
