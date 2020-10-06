@@ -14,8 +14,9 @@ This module is IaC - infrastructure as code which contains a nomad job of [postg
 4. [Outputs](#outputs)
 5. [Example usage](#example-usage)
     1. [Verifying setup](#verifying-setup)
-6. [Vault secrets](#vault-secrets)
-7. [License](#license)
+6. [Volumes](#volumes)
+7. [Vault secrets](#vault-secrets)
+8. [License](#license)
 
 ## Usage
 ```text
@@ -34,15 +35,18 @@ The command will run a standalone instance of postgres found in the [example](/e
 ## Inputs
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| nomad\_datacenters | Nomad data centers | list(string) | ["dc1"] | yes |
-| nomad\_namespace | [Enterprise] Nomad namespace | string | "default" | yes |
-| service\_name | Postgres service name | string | "postgres" | yes |
-| container\_port | Postgres port | number | 5432 | yes |
-| container\_image | Postgres docker image | string | "postgres:12-alpine" | yes |
-| admin\_user | Postgres admin username | string or data obj | data.vault_generic_secret.postgres_secrets.data.username | yes |
-| admin\_password | Postgres admin password | string or data obj | data.vault_generic_secret.postgres_secrets.data.password | yes |
-| admin\_password | Postgres database name | string | "metastore" | yes |
-| container\_environment\_variables | Postgres container environement variables | list(string) | ["PGDATA=/var/lib/postgresql/data"] | yes |
+| nomad\_datacenters | Nomad data centers | list(string) | ["dc1"] | no |
+| nomad\_namespace | [Enterprise] Nomad namespace | string | "default" | no |
+| nomad\_host\_volume | Nomad host volume name | string | "persistence" | no |
+| service\_name | Postgres service name | string | "postgres" | no |
+| container\_port | Postgres port | number | 5432 | no |
+| container\_image | Postgres docker image | string | "postgres:12-alpine" | no |
+| admin\_user | Postgres admin username | string or data obj | "postgres" | yes |
+| admin\_password | Postgres admin password | string or data obj | "postgres" | yes |
+| admin\_password | Postgres database name | string | "metastore" | yes |
+| container\_environment\_variables | Postgres container environement variables | list(string) | ["PGDATA=/var/lib/postgresql/data"] | no |
+| volume\_destination | Postgres volume destination | string | "/var/lib/postgresql/data" | no |
+| use\_host\_volume | Use nomad host volume | bool | false | no |
 
 ## Outputs
 | Name | Description | Type |
@@ -63,6 +67,7 @@ module "postgres" {
   # nomad
   nomad_datacenters = ["dc1"]
   nomad_namespace   = "default"
+  nomad_host_volume = "persistence"
 
   # postgres
   service_name                    = "postgres"
@@ -71,6 +76,8 @@ module "postgres" {
   admin_user                      = "postgres"
   admin_password                  = "postgres"
   database                        = "metastore"
+  volume_destination              = "/var/lib/postgresql/data"
+  use_host_volume                 = true
   container_environment_variables = ["PGDATA=/var/lib/postgresql/data"]
 }
 ```
@@ -80,6 +87,10 @@ You can verify that postgres is running by checking the connection. This can be 
 ```shell script
 make proxy-to-postgres
 ```
+
+## Volumes
+We are using [host volume](https://www.nomadproject.io/docs/job-specification/volume) to store postgres data.
+If the `use_host_volume` is set to `true`, Postgres data will be available in root `/persistence/postgres` folder inside the Vagrant box.
 
 ## Vault secrets
 The postgres username and password is generated and put in `/secret/postgres` inside Vault.

@@ -22,10 +22,17 @@ job "${service_name}" {
       mode = "bridge"
     }
 
+  %{ if use_host_volume }
+    volume "persistence" {
+      type      = "host"
+      source    = "${nomad_host_volume}"
+      read_only = false
+    }
+  %{ endif }
+
     service {
       name = "${service_name}"
       port = "${port}"
-
       check {
         type      = "script"
         task      = "postgresql"
@@ -43,6 +50,14 @@ job "${service_name}" {
 
     task "postgresql" {
       driver = "docker"
+
+    %{ if use_host_volume }
+      volume_mount {
+        volume      = "persistence"
+        destination = "${volume_destination}"
+        read_only   = false
+      }
+    %{ endif }
 
       config {
         image = "${image}"
