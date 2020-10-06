@@ -73,7 +73,9 @@
 
 - name: Create a table with testdata
   shell: |
-    psql "dbname=metastore host=127.0.0.1 user={{ username }} password={{ password }} port=5432 sslmode=disable" < testtable.sql
+    psql "dbname=metastore host=127.0.0.1 user={{ username.stdout }} password={{ password.stdout }} port=9999 sslmode=disable" < db_testfiles/testtable.sql
+  register: create_table_output
+  failed_when: create_table_output.stderr != ""
   tags: test
 
 - name: Stop nomad postgres job (nomad acl enabled)
@@ -133,17 +135,12 @@
     msg: "{{terraform.stdout}}"
   tags: test
 
-#- name: Upload csv file to `/one/some/prefix/test-persistence-file.csv`
-#  shell: mc cp ../../example/resources/data/csv/test-persistence-file.csv postgres-container/one/some/prefix/test-persistence-file.csv
-#  register: csv_copy2
-#  retries: 10
-#  delay: 5
-#  until: csv_copy2.rc == 0
-#  tags: test
-
-#- name: Verify that file exist on target `/one/some/prefix/test-persistence-file.csv`
-#  shell: mc ls postgres-container/one/some/prefix/test-persistence-file.csv
-#  tags: test
+- name: Verify that table exist by inserting data into table
+  shell: |
+    psql "dbname=metastore host=127.0.0.1 user={{ username.stdout }} password={{ password.stdout }} port=9999 sslmode=disable" < db_testfiles/data.sql
+  register: insert_data_output
+  failed_when: insert_data_output.stderr != ""
+  tags: test
 
 #****************************************#
 #Test Scenario 2
@@ -152,42 +149,34 @@
 # 2.Nomad should automatically create a new instance of container with the same volume
 # 3.Verify that data available on new instance
 
-#- name: Stop the docker container running postgres
-#  shell: docker stop $(docker ps -a -q --filter ancestor="postgres/postgres:latest")
-#  register: docker_output
-#  tags: test
-#
-#- name: Wait till nomad restarts the docker container running postgres
-#  shell: docker ps -a -q --filter ancestor="postgres/postgres:latest"
-#  register: docker_output1
-#  retries: 20
-#  delay: 15
-#  until: docker_output1.stdout != ""
-#  tags: test
-#
-#- name: Start local proxy on port 9999 to postgres service
-#  shell: nohup consul connect proxy -service postgres-local -upstream postgres:9999 -log-level debug </dev/null >/dev/null 2>&1 &
-#  when: not lookup('env', 'consul_acl') | bool or (lookup('env', 'consul_acl') | bool and lookup('env', 'consul_acl_default_policy') == 'allow')
-#  tags: test
-#
-#- name: Start local proxy on port 9999 to postgres service with token
-#  shell: nohup consul connect proxy -service postgres-local -upstream postgres:9999 -log-level debug </dev/null >/dev/null 2>&1 &
-#  when: lookup('env', 'consul_acl') | bool and lookup('env', 'consul_acl_default_policy') == 'deny'
-#  environment:
-#    CONSUL_HTTP_TOKEN: "{{ consul_token }}"
-#  tags: test
-#
-#- name: Pause for 40 seconds before querying
-#  pause:
-#    seconds: 40
-#  tags: test
-#
-#- name: Verify that file persists on target `/one/some/prefix/iris-file.csv`
-#  shell: mc ls postgres-container/one/some/prefix/iris-file.csv
-#  register: ls_iris_file
-#  tags: test
-#
-#- name: Debug output from ls command
-#  debug:
-#    msg: "{{ ls_iris_file }}"
-#  tags: test
+- name: Stop the docker container running postgres
+  shell: docker stop $(docker ps -a -q --filter ancestor="postgres:12-alpine")
+  register: docker_output
+  tags: test
+
+- name: Wait till nomad restarts the docker container running postgres
+  shell: docker ps -a -q --filter ancestor="postgres:12-alpine"
+  register: docker_output1
+  retries: 20
+  delay: 15
+  until: docker_output1.stdout != ""
+  tags: test
+
+- name: Start local proxy on port 9999 to postgres service
+  shell: nohup consul connect proxy -service postgres-local -upstream postgres:9999 -log-level debug </dev/null >/dev/null 2>&1 &
+  when: not lookup('env', 'consul_acl') | bool or (lookup('env', 'consul_acl') | bool and lookup('env', 'consul_acl_default_policy') == 'allow')
+  tags: test
+
+- name: Start local proxy on port 9999 to postgres service with token
+  shell: nohup consul connect proxy -service postgres-local -upstream postgres:9999 -log-level debug </dev/null >/dev/null 2>&1 &
+  when: lookup('env', 'consul_acl') | bool and lookup('env', 'consul_acl_default_policy') == 'deny'
+  environment:
+    CONSUL_HTTP_TOKEN: "{{ consul_token }}"
+  tags: test
+
+- name: Verify that table exist by inserting data into table
+  shell: |
+    psql "dbname=metastore host=127.0.0.1 user={{ username.stdout }} password={{ password.stdout }} port=9999 sslmode=disable" < db_testfiles/data.sql
+  register: insert_data_output2
+  failed_when: insert_data_output2.stderr != ""
+  tags: test
