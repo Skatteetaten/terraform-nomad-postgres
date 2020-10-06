@@ -1,0 +1,208 @@
+# This file contains checks and test scenarios that test the persistence feature for postgres
+- name: set variable
+  set_fact:
+    consul_token: "master"
+  tags: test
+
+- name: Fetch bootstrap token nomad
+  shell:
+    cmd: vault kv get -field=secret-id secret/nomad-bootstrap-token
+  when: lookup('env', 'nomad_acl') | bool
+  register: bootstrap_token
+  tags: test
+
+- name: Verify if host volume has been added on nomad node(acl enabled)
+  shell:
+    cmd: nomad node status -short -self | grep 'Host Volumes' | tr -d " \t\n\r"  | cut -d "=" -f2
+  register: nomad_node_status
+  when: lookup('env', 'nomad_acl') | bool
+  failed_when: nomad_node_status.stdout != "persistence"
+  environment:
+    NOMAD_TOKEN: "{{ bootstrap_token.stdout }}"
+  tags: test
+
+- name: Verify if host volume has been added on nomad node(acl disabled)
+  shell:
+    cmd: nomad node status -short -self | grep 'Host Volumes' | tr -d " \t\n\r"  | cut -d "=" -f2
+  register: nomad_node_status_1
+  failed_when: nomad_node_status_1.stdout != "persistence"
+  when: not lookup('env', 'nomad_acl') | bool
+  tags: test
+
+#******************************************************************#
+#Test Scenario 1
+#******************************************************************#
+# 1. Stop the postgres job
+# 2. Check status for postgres and it should not be in running state
+# 3. Delete terraform.tfstate, terraform.tfstate.backup and .terraform
+# 4. Re-deploy postgres with existing volume using terraform apply
+# 5. Verify that data persists on new instance
+# 6. Verify that it is possible to upload data to the new instance
+# https://unix.stackexchange.com/a/148698
+
+- name: Start local proxy on port 9999 to postgres service
+  shell: nohup consul connect proxy -service postgres-local -upstream postgres:9999 -log-level debug </dev/null >/dev/null 2>&1 &
+  when: not lookup('env', 'consul_acl') | bool or (lookup('env', 'consul_acl') | bool and lookup('env', 'consul_acl_default_policy') == 'allow')
+  tags: test
+
+- name: Start local proxy on port 9999 to postgres service with token
+  shell: nohup consul connect proxy -service postgres-local -upstream postgres:9999 -log-level debug </dev/null >/dev/null 2>&1 &
+  when: lookup('env', 'consul_acl') | bool and lookup('env', 'consul_acl_default_policy') == 'deny'
+  environment:
+    CONSUL_HTTP_TOKEN: "{{ consul_token }}"
+  tags: test
+
+- name: postgres curl example. Verify that proxy to postgres available
+  uri:
+    url: http://127.0.0.1:9999
+    status_code: 403
+  register: curl_output
+  until: curl_output.status == 403
+  retries: 10
+  delay: 5
+  tags: test
+
+- name: Debug curl_output
+  debug:
+    msg: "{{curl_output}}"
+  tags: test
+
+- name: Register username
+  shell:
+    cmd: vault kv get -field='username' secret/postgres
+  register: username
+
+- name: Register password
+  shell:
+    cmd: vault kv get -field='password' secret/postgres
+  register: password
+  tags: test
+
+- name: Install psql
+  shell: |
+    sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+    sudo apt-get update
+    sudo apt-get -y install postgresql
+  tags: test
+
+- name: Create a table with testdata
+  shell: |
+    psql "dbname=metastore host=127.0.0.1 user={{ username }} password={{ password }} port=5432 sslmode=disable" < testtable.sql
+  tags: test
+
+- name: Stop nomad postgres job (nomad acl enabled)
+  shell:
+    cmd: nomad stop -purge postgres
+  when: lookup('env', 'nomad_acl') | bool
+  environment:
+    NOMAD_TOKEN: "{{ bootstrap_token.stdout }}"
+  tags: test
+
+- name: Stop nomad postgres job (nomad acl disabled)
+  shell:
+    cmd: nomad stop -purge postgres
+  when: not lookup('env', 'nomad_acl') | bool
+  tags: test
+
+- name: Fetch nomad postgres job status(nomad acl enabled)
+  shell:
+    cmd: nomad status postgres | grep -m 1 'Status' | tr -d " \t\n\r"  | cut -d "=" -f2
+  register: nomad_postgres_status
+  when: lookup('env', 'nomad_acl') | bool
+  failed_when: nomad_postgres_status.stdout == "running"
+  environment:
+    NOMAD_TOKEN: "{{ bootstrap_token.stdout }}"
+  tags: test
+
+- name: Fetch nomad postgres job status (nomad acl disabled)
+  shell:
+    cmd: nomad status postgres | grep -m 1 'Status' | tr -d " \t\n\r"  | cut -d "=" -f2
+  register: nomad_postgres_status_1
+  when: not lookup('env', 'nomad_acl') | bool
+  failed_when: nomad_postgres_status_1.stdout == "running"
+  tags: test
+
+- name: Delete terraform related files and folders
+  file:
+    path: "../../example/{{ line_item }}"
+    state: absent
+  loop:
+    - terraform.tfstate.backup
+    - terraform.tfstate
+    - .terraform
+  loop_control:
+    loop_var: line_item
+  tags: test
+
+- name: Terraform apply to restart purged postgres job
+  terraform:
+    project_path: ../../example
+    force_init: true
+    state: present
+  register: terraform
+  tags: test
+
+- name: Terraform stdout
+  debug:
+    msg: "{{terraform.stdout}}"
+  tags: test
+
+#- name: Upload csv file to `/one/some/prefix/test-persistence-file.csv`
+#  shell: mc cp ../../example/resources/data/csv/test-persistence-file.csv postgres-container/one/some/prefix/test-persistence-file.csv
+#  register: csv_copy2
+#  retries: 10
+#  delay: 5
+#  until: csv_copy2.rc == 0
+#  tags: test
+
+#- name: Verify that file exist on target `/one/some/prefix/test-persistence-file.csv`
+#  shell: mc ls postgres-container/one/some/prefix/test-persistence-file.csv
+#  tags: test
+
+#****************************************#
+#Test Scenario 2
+#****************************************#
+# 1.Simulate container crash (docker cli, stop container and remove it)
+# 2.Nomad should automatically create a new instance of container with the same volume
+# 3.Verify that data available on new instance
+
+#- name: Stop the docker container running postgres
+#  shell: docker stop $(docker ps -a -q --filter ancestor="postgres/postgres:latest")
+#  register: docker_output
+#  tags: test
+#
+#- name: Wait till nomad restarts the docker container running postgres
+#  shell: docker ps -a -q --filter ancestor="postgres/postgres:latest"
+#  register: docker_output1
+#  retries: 20
+#  delay: 15
+#  until: docker_output1.stdout != ""
+#  tags: test
+#
+#- name: Start local proxy on port 9999 to postgres service
+#  shell: nohup consul connect proxy -service postgres-local -upstream postgres:9999 -log-level debug </dev/null >/dev/null 2>&1 &
+#  when: not lookup('env', 'consul_acl') | bool or (lookup('env', 'consul_acl') | bool and lookup('env', 'consul_acl_default_policy') == 'allow')
+#  tags: test
+#
+#- name: Start local proxy on port 9999 to postgres service with token
+#  shell: nohup consul connect proxy -service postgres-local -upstream postgres:9999 -log-level debug </dev/null >/dev/null 2>&1 &
+#  when: lookup('env', 'consul_acl') | bool and lookup('env', 'consul_acl_default_policy') == 'deny'
+#  environment:
+#    CONSUL_HTTP_TOKEN: "{{ consul_token }}"
+#  tags: test
+#
+#- name: Pause for 40 seconds before querying
+#  pause:
+#    seconds: 40
+#  tags: test
+#
+#- name: Verify that file persists on target `/one/some/prefix/iris-file.csv`
+#  shell: mc ls postgres-container/one/some/prefix/iris-file.csv
+#  register: ls_iris_file
+#  tags: test
+#
+#- name: Debug output from ls command
+#  debug:
+#    msg: "{{ ls_iris_file }}"
+#  tags: test
