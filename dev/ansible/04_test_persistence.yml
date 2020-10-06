@@ -52,21 +52,6 @@
     CONSUL_HTTP_TOKEN: "{{ consul_token }}"
   tags: test
 
-- name: postgres curl example. Verify that proxy to postgres available
-  uri:
-    url: http://127.0.0.1:9999
-    status_code: 403
-  register: curl_output
-  until: curl_output.status == 403
-  retries: 10
-  delay: 5
-  tags: test
-
-- name: Debug curl_output
-  debug:
-    msg: "{{curl_output}}"
-  tags: test
-
 - name: Register username
   shell:
     cmd: vault kv get -field='username' secret/postgres
