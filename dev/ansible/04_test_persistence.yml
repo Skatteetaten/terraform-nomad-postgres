@@ -173,7 +173,7 @@
   register: docker_output
   tags: test
 
-- name: Wait till nomad restarts the docker container running postgres
+- name: Wait until nomad restarts the docker container running postgres
   shell: docker ps -a -q --filter ancestor="postgres:12-alpine"
   register: docker_output1
   retries: 20
