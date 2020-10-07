@@ -80,6 +80,8 @@
   shell: |
     psql "dbname=metastore host=127.0.0.1 user={{ username.stdout }} password={{ password.stdout }} port=9999 sslmode=disable" < db_testfiles/testtable.sql
   register: create_table_output
+  retries: 5
+  delay: 15
   failed_when: create_table_output.stderr != ""
   tags: test
 
@@ -144,6 +146,8 @@
   shell: |
     psql "dbname=metastore host=127.0.0.1 user={{ username.stdout }} password={{ password.stdout }} port=9999 sslmode=disable" < db_testfiles/data.sql
   register: insert_data_output
+  retries: 5
+  delay: 15
   failed_when: insert_data_output.stderr != ""
   tags: test
 
@@ -188,5 +192,7 @@
   shell: |
     psql "dbname=metastore host=127.0.0.1 user={{ username.stdout }} password={{ password.stdout }} port=9999 sslmode=disable" < db_testfiles/data.sql
   register: insert_data_output2
+  retries: 5
+  delay: 15
   failed_when: insert_data_output2.stderr != ""
   tags: test
