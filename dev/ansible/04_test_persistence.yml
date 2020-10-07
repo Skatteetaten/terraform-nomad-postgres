@@ -85,6 +85,11 @@
   failed_when: create_table_output.stderr != ""
   tags: test
 
+- name: Debug create_table_output
+  debug:
+      msg: "{{ create_table_output.stdout }}"
+  tags: test
+
 - name: Stop nomad postgres job (nomad acl enabled)
   shell:
     cmd: nomad stop -purge postgres
@@ -151,6 +156,11 @@
   failed_when: insert_data_output.stderr != ""
   tags: test
 
+- name: Debug insert_data_output
+  debug:
+      msg: "{{ insert_data_output.stdout }}"
+  tags: test
+
 #****************************************#
 #Test Scenario 2
 #****************************************#
@@ -176,11 +186,6 @@
   when: not lookup('env', 'consul_acl') | bool or (lookup('env', 'consul_acl') | bool and lookup('env', 'consul_acl_default_policy') == 'allow')
   tags: test
 
-- name: Create intention for proxy between postgres-local and posgres
-  shell: consul intention create postgres-local postgres
-  when: lookup('env', 'consul_acl') | bool and lookup('env', 'consul_acl_default_policy') == 'deny'
-  tags: test
-
 - name: Start local proxy on port 9999 to postgres service with token
   shell: nohup consul connect proxy -service postgres-local -upstream postgres:9999 -log-level debug </dev/null >/dev/null 2>&1 &
   when: lookup('env', 'consul_acl') | bool and lookup('env', 'consul_acl_default_policy') == 'deny'
@@ -195,4 +200,9 @@
   retries: 5
   delay: 15
   failed_when: insert_data_output2.stderr != ""
+  tags: test
+
+- name: Debug insert_data_output2
+  debug:
+      msg: "{{ insert_data_output2.stdout }}"
   tags: test
