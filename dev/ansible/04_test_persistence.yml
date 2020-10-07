@@ -104,7 +104,7 @@
   when: not lookup('env', 'nomad_acl') | bool
   tags: test
 
-- name: Fetch nomad postgres job status(nomad acl enabled)
+- name: Fetch nomad postgres job status (nomad acl enabled)
   shell:
     cmd: nomad status postgres | grep -m 1 'Status' | tr -d " \t\n\r"  | cut -d "=" -f2
   register: nomad_postgres_status
