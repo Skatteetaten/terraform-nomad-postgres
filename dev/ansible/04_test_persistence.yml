@@ -1,0 +1,182 @@
+# This file contains checks and test scenarios that test the persistence feature for postgres
+- name: set variable
+  set_fact:
+    consul_token: "master"
+  tags: test
+
+- name: Fetch bootstrap token nomad
+  shell:
+    cmd: vault kv get -field=secret-id secret/nomad-bootstrap-token
+  when: lookup('env', 'nomad_acl') | bool
+  register: bootstrap_token
+  tags: test
+
+- name: Verify if host volume has been added on nomad node(acl enabled)
+  shell:
+    cmd: nomad node status -short -self | grep 'Host Volumes' | tr -d " \t\n\r"  | cut -d "=" -f2
+  register: nomad_node_status
+  when: lookup('env', 'nomad_acl') | bool
+  failed_when: nomad_node_status.stdout != "persistence"
+  environment:
+    NOMAD_TOKEN: "{{ bootstrap_token.stdout }}"
+  tags: test
+
+- name: Verify if host volume has been added on nomad node(acl disabled)
+  shell:
+    cmd: nomad node status -short -self | grep 'Host Volumes' | tr -d " \t\n\r"  | cut -d "=" -f2
+  register: nomad_node_status_1
+  failed_when: nomad_node_status_1.stdout != "persistence"
+  when: not lookup('env', 'nomad_acl') | bool
+  tags: test
+
+#******************************************************************#
+#Test Scenario 1
+#******************************************************************#
+# 1. Stop the postgres job
+# 2. Check status for postgres and it should not be in running state
+# 3. Delete terraform.tfstate, terraform.tfstate.backup and .terraform
+# 4. Re-deploy postgres with existing volume using terraform apply
+# 5. Verify that data persists on new instance
+# 6. Verify that it is possible to upload data to the new instance
+# https://unix.stackexchange.com/a/148698
+
+- name: Start local proxy on port 9999 to postgres service
+  shell: nohup consul connect proxy -service postgres-local -upstream postgres:9999 -log-level debug </dev/null >/dev/null 2>&1 &
+  when: not lookup('env', 'consul_acl') | bool or (lookup('env', 'consul_acl') | bool and lookup('env', 'consul_acl_default_policy') == 'allow')
+  tags: test
+
+- name: Create intention for proxy between postgres-local and posgres
+  shell: consul intention create postgres-local postgres
+  when: lookup('env', 'consul_acl') | bool and lookup('env', 'consul_acl_default_policy') == 'deny'
+  tags: test
+
+- name: Start local proxy on port 9999 to postgres service with token
+  shell: nohup consul connect proxy -service postgres-local -upstream postgres:9999 -log-level debug </dev/null >/dev/null 2>&1 &
+  when: lookup('env', 'consul_acl') | bool and lookup('env', 'consul_acl_default_policy') == 'deny'
+  environment:
+    CONSUL_HTTP_TOKEN: "{{ consul_token }}"
+  tags: test
+
+- name: Register username
+  shell:
+    cmd: vault kv get -field='username' secret/postgres
+  register: username
+
+- name: Register password
+  shell:
+    cmd: vault kv get -field='password' secret/postgres
+  register: password
+  tags: test
+
+- name: Install psql
+  shell: |
+    sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+    apt-get update
+    apt-get -y install postgresql
+  tags: test
+
+- name: Create a table with testdata
+  shell: |
+    psql "dbname=metastore host=127.0.0.1 user={{ username.stdout }} password={{ password.stdout }} port=9999 sslmode=disable" < db_testfiles/testtable.sql
+  register: create_table_output
+  retries: 5
+  delay: 15
+  failed_when: create_table_output.stderr != ""
+  tags: test
+
+- name: Stop nomad postgres job (nomad acl enabled)
+  shell:
+    cmd: nomad stop -purge postgres
+  when: lookup('env', 'nomad_acl') | bool
+  environment:
+    NOMAD_TOKEN: "{{ bootstrap_token.stdout }}"
+  tags: test
+
+- name: Stop nomad postgres job (nomad acl disabled)
+  shell:
+    cmd: nomad stop -purge postgres
+  when: not lookup('env', 'nomad_acl') | bool
+  tags: test
+
+- name: Fetch nomad postgres job status (nomad acl enabled)
+  shell:
+    cmd: nomad status postgres | grep -m 1 'Status' | tr -d " \t\n\r"  | cut -d "=" -f2
+  register: nomad_postgres_status
+  when: lookup('env', 'nomad_acl') | bool
+  failed_when: nomad_postgres_status.stdout == "running"
+  environment:
+    NOMAD_TOKEN: "{{ bootstrap_token.stdout }}"
+  tags: test
+
+- name: Fetch nomad postgres job status (nomad acl disabled)
+  shell:
+    cmd: nomad status postgres | grep -m 1 'Status' | tr -d " \t\n\r"  | cut -d "=" -f2
+  register: nomad_postgres_status_1
+  when: not lookup('env', 'nomad_acl') | bool
+  failed_when: nomad_postgres_status_1.stdout == "running"
+  tags: test
+
+- name: Delete terraform related files and folders
+  file:
+    path: "../../example/{{ line_item }}"
+    state: absent
+  loop:
+    - terraform.tfstate.backup
+    - terraform.tfstate
+    - .terraform
+  loop_control:
+    loop_var: line_item
+  tags: test
+
+- name: Terraform apply to restart purged postgres job
+  terraform:
+    project_path: ../../example
+    force_init: true
+    state: present
+  register: terraform
+  tags: test
+
+- name: Terraform stdout
+  debug:
+    msg: "{{terraform.stdout}}"
+  tags: test
+
+- name: Verify that table exist by inserting data into table
+  shell: |
+    psql "dbname=metastore host=127.0.0.1 user={{ username.stdout }} password={{ password.stdout }} port=9999 sslmode=disable" < db_testfiles/data.sql
+  register: insert_data_output
+  retries: 5
+  delay: 15
+  failed_when: insert_data_output.stderr != ""
+  tags: test
+
+
+#****************************************#
+#Test Scenario 2
+#****************************************#
+# 1.Simulate container crash (docker cli, stop container and remove it)
+# 2.Nomad should automatically create a new instance of container with the same volume
+# 3.Verify that data available on new instance
+
+- name: Stop the docker container running postgres
+  shell: docker stop $(docker ps -a -q --filter ancestor="postgres:12-alpine")
+  register: docker_output
+  tags: test
+
+- name: Wait until nomad restarts the docker container running postgres
+  shell: docker ps -a -q --filter ancestor="postgres:12-alpine"
+  register: docker_output1
+  retries: 20
+  delay: 15
+  until: docker_output1.stdout != ""
+  tags: test
+
+- name: Verify that table exist by inserting data into table
+  shell: |
+    psql "dbname=metastore host=127.0.0.1 user={{ username.stdout }} password={{ password.stdout }} port=9999 sslmode=disable" < db_testfiles/data.sql
+  register: insert_data_output2
+  retries: 5
+  delay: 15
+  failed_when: insert_data_output2.stderr != ""
+  tags: test

@@ -1,0 +1,1 @@
+INSERT INTO testtable (data) VALUES('data1');
