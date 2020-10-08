@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.0.2 UNRELEASED]
+## [0.1.0]
 
 ### Changed
 - Renamed vars in `variables.tf` and where they are used #8
