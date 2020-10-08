@@ -176,7 +176,7 @@
   shell: |
     psql "dbname=metastore host=127.0.0.1 user={{ username.stdout }} password={{ password.stdout }} port=9999 sslmode=disable" < db_testfiles/data.sql
   register: insert_data_output2
-  retries: 5
+  retries: 20
   delay: 15
-  failed_when: insert_data_output2.stderr != ""
+  until: insert_data_output2.stdout == "INSERT 0 1"
   tags: test
