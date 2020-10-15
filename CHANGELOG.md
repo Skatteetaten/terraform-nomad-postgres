@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.2.0 UNRELEASED]
+
+### Changed
+- Synced with template and updated box version #34
+
 ## [0.1.0]
 
 ### Changed
