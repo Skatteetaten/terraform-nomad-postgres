@@ -1,6 +1,6 @@
 - name: set variable
   set_fact:
-    consul_token: "master"
+    consul_token: "{{ lookup('env', 'consul_master_token') }}"
 
 - name: Postgres healthchecks pass
   uri:
@@ -18,7 +18,7 @@
 
 - name: Postgres healthchecks pass with token
   uri:
-    url: http://localhost:8500/v1/health/checks/minio?filter={{ '(Status=="passing")' | urlencode }}
+    url: http://localhost:8500/v1/health/checks/postgres?filter={{ '(Status=="passing")' | urlencode }}
     method: GET
     headers:
       X-Consul-Token: "{{ consul_token }}"
