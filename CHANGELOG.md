@@ -2,6 +2,9 @@
 
 ## [0.2.0 UNRELEASED]
 
+### Added
+- Added github templates for issues and PR #35
+
 ### Changed
 - Synced with template and updated box version #34
 
