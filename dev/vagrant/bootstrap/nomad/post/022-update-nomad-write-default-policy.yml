@@ -3,6 +3,9 @@
       cmd: vault kv get -field=secret-id secret/nomad-bootstrap-token
   when: lookup('env', 'nomad_acl') | bool
   register: bootstrap_token
+  environment:
+      VAULT_ADDR: "http://127.0.0.1:8200"
+      VAULT_TOKEN: "{{ lookup('env', 'vault_master_token') }}"
 
 - name: Copy nomad policy file to /etc/nomad.d/policies/
   copy:

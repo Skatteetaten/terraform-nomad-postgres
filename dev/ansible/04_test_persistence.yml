@@ -1,14 +1,19 @@
 # This file contains checks and test scenarios that test the persistence feature for postgres
 - name: set variable
   set_fact:
-    consul_token: "master"
+    consul_token: "{{ lookup('env', 'consul_master_token') }}"
+    vault_token: "{{ lookup('env', 'vault_master_token') }}"
+    vault_addr: "{{ lookup('env', 'VAULT_ADDR') }}"
   tags: test
 
 - name: Fetch bootstrap token nomad
   shell:
     cmd: vault kv get -field=secret-id secret/nomad-bootstrap-token
+  environment:
+      VAULT_ADDR: "{{ vault_addr }}"
+      VAULT_TOKEN: "{{ vault_token }}"
   when: lookup('env', 'nomad_acl') | bool
-  register: bootstrap_token
+  register: nomad_token
   tags: test
 
 - name: Verify if host volume has been added on nomad node(acl enabled)
@@ -18,7 +23,7 @@
   when: lookup('env', 'nomad_acl') | bool
   failed_when: nomad_node_status.stdout != "persistence"
   environment:
-    NOMAD_TOKEN: "{{ bootstrap_token.stdout }}"
+    NOMAD_TOKEN: "{{ nomad_token.stdout }}"
   tags: test
 
 - name: Verify if host volume has been added on nomad node(acl disabled)
@@ -48,6 +53,8 @@
 - name: Create intention for proxy between postgres-local and posgres
   shell: consul intention create postgres-local postgres
   when: lookup('env', 'consul_acl') | bool and lookup('env', 'consul_acl_default_policy') == 'deny'
+  environment:
+      CONSUL_HTTP_TOKEN: "{{ consul_token }}"
   tags: test
 
 - name: Start local proxy on port 9999 to postgres service with token
@@ -60,11 +67,17 @@
 - name: Register username
   shell:
     cmd: vault kv get -field='username' secret/postgres
+  environment:
+      VAULT_ADDR: "{{ vault_addr }}"
+      VAULT_TOKEN: "{{ vault_token }}"
   register: username
 
 - name: Register password
   shell:
     cmd: vault kv get -field='password' secret/postgres
+  environment:
+      VAULT_ADDR: "{{ vault_addr }}"
+      VAULT_TOKEN: "{{ vault_token }}"
   register: password
   tags: test
 
@@ -90,7 +103,7 @@
     cmd: nomad stop -purge postgres
   when: lookup('env', 'nomad_acl') | bool
   environment:
-    NOMAD_TOKEN: "{{ bootstrap_token.stdout }}"
+    NOMAD_TOKEN: "{{ nomad_token.stdout }}"
   tags: test
 
 - name: Stop nomad postgres job (nomad acl disabled)
@@ -106,7 +119,7 @@
   when: lookup('env', 'nomad_acl') | bool
   failed_when: nomad_postgres_status.stdout == "running"
   environment:
-    NOMAD_TOKEN: "{{ bootstrap_token.stdout }}"
+    NOMAD_TOKEN: "{{ nomad_token.stdout }}"
   tags: test
 
 - name: Fetch nomad postgres job status (nomad acl disabled)
