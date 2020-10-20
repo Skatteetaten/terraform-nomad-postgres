@@ -2,6 +2,9 @@
 
 ## [0.2.0 UNRELEASED]
 
+### Added
+- Added github templates for issues and PR #35
+
 ### Changed
 - Synced with template and updated box version #34
 - Removed gen/password plugin, now using ansible to generate random username and password #27
