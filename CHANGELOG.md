@@ -4,6 +4,7 @@
 
 ### Changed
 - Synced with template and updated box version #34
+- Removed gen/password plugin, now using ansible to generate random username and password #27
 
 ## [0.1.0]
 
