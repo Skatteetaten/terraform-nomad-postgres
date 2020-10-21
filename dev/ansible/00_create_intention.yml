@@ -5,19 +5,6 @@
   set_fact:
     consul_token: "{{ lookup('env', 'consul_master_token') }}"
 
-- name: Check if intention mc => postgres (allow) exists
-  shell: consul intention match -source mc
-  register: mc_intention
-  when: lookup('env', 'consul_acl') | bool and lookup('env', 'consul_acl_default_policy') == 'deny'
-  environment:
-      CONSUL_HTTP_TOKEN: "{{ consul_token }}"
-
-- name: Consul create intention mc => postgres (allow)
-  shell: consul intention create mc minio
-  when: lookup('env', 'consul_acl') | bool and lookup('env', 'consul_acl_default_policy') == 'deny' and mc_intention.stdout_lines == []
-  environment:
-    CONSUL_HTTP_TOKEN: "{{ consul_token }}"
-
 - name: Check if intention postgres-local => postgres (allow) exists
   shell: consul intention match -source postgres-local
   register: postgres_local_intention
@@ -25,8 +12,8 @@
   environment:
       CONSUL_HTTP_TOKEN: "{{ consul_token }}"
 
-- name: Consul create intention postgres-local => postgres (allow)
-  shell: consul intention create postgres-local minio
-  when: lookup('env', 'consul_acl') | bool and lookup('env', 'consul_acl_default_policy') == 'deny' and postgres_local_intention.stdout_lines == []
+- name: Create intention for proxy between postgres-local and postgres
+  shell: consul intention create postgres-local postgres
+  when: lookup('env', 'consul_acl') | bool and lookup('env', 'consul_acl_default_policy') == 'deny'
   environment:
-    CONSUL_HTTP_TOKEN: "{{ consul_token }}"
+      CONSUL_HTTP_TOKEN: "{{ consul_token }}"
