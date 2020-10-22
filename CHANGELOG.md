@@ -9,6 +9,7 @@
 - Synced with template and updated box version #34
 - Removed gen/password plugin, now using ansible to generate random username and password #27
 - Removed unused intentions #32
+- Removed `template_example` folder #41
 
 ## [0.1.0]
 
