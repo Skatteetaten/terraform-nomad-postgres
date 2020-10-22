@@ -15,5 +15,3 @@ client {
   }
 }
 ```
-
-See [example](../../../../template_example/dev/vagrant/conf/nomad/99-override.hcl)
