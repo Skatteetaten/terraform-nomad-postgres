@@ -50,13 +50,6 @@
   when: not lookup('env', 'consul_acl') | bool or (lookup('env', 'consul_acl') | bool and lookup('env', 'consul_acl_default_policy') == 'allow')
   tags: test
 
-- name: Create intention for proxy between postgres-local and posgres
-  shell: consul intention create postgres-local postgres
-  when: lookup('env', 'consul_acl') | bool and lookup('env', 'consul_acl_default_policy') == 'deny'
-  environment:
-      CONSUL_HTTP_TOKEN: "{{ consul_token }}"
-  tags: test
-
 - name: Start local proxy on port 9999 to postgres service with token
   shell: nohup consul connect proxy -service postgres-local -upstream postgres:9999 -log-level debug </dev/null >/dev/null 2>&1 &
   when: lookup('env', 'consul_acl') | bool and lookup('env', 'consul_acl_default_policy') == 'deny'
