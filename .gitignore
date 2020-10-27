@@ -2,6 +2,7 @@
 .idea
 packer/output-hashistack
 terraform.tfstate*
+.terraform.tfstate*
 .terraform
 .minio.sys
 tmp

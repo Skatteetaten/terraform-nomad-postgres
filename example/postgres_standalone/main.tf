@@ -1,14 +1,5 @@
-provider "vault" {
-  address = "http://127.0.0.1:8200"
-  token = "master"
-}
-
-data "vault_generic_secret" "postgres_secrets" {
-  path  = "secret/postgres"
-}
-
 module "postgres" {
-  source = "./.."
+  source = "../.."
 
   # nomad
   nomad_datacenters = ["dc1"]
@@ -19,10 +10,15 @@ module "postgres" {
   service_name                    = "postgres"
   container_image                 = "postgres:12-alpine"
   container_port                  = 5432
-  admin_user                      = data.vault_generic_secret.postgres_secrets.data.username
-  admin_password                  = data.vault_generic_secret.postgres_secrets.data.password
+  vault_secret                    = {
+                                      use_vault_kv           = true,
+                                      vault_kv_path          = "secret/postgres",
+                                      vault_kv_username_name = "username",
+                                      vault_kv_password_name = "password"
+                                    }
   database                        = "metastore"
   volume_destination              = "/var/lib/postgresql/data"
   use_host_volume                 = true
+  use_canary                      = true
   container_environment_variables = ["PGDATA=/var/lib/postgresql/data/"]
 }

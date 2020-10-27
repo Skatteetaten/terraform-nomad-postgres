@@ -1,5 +1,4 @@
 job "${service_name}" {
-
   type        = "service"
   datacenters = "${datacenters}"
   namespace   = "${namespace}"
@@ -10,14 +9,15 @@ job "${service_name}" {
     min_healthy_time  = "10s"
     healthy_deadline  = "10m"
     progress_deadline = "12m"
+    stagger           = "30s"
+  %{ if use_canary }
+    canary            = 1
     auto_revert       = true
     auto_promote      = true
-    canary            = 1
-    stagger           = "30s"
+  %{ endif }
   }
 
   group "database" {
-
     network {
       mode = "bridge"
     }
@@ -73,6 +73,15 @@ job "${service_name}" {
         change_mode = "noop"
         env         = true
         data        = <<EOF
+%{ if use_vault_kv }
+{{ with secret "${vault_kv_path}" }}
+POSTGRES_USER="{{ .Data.data.${vault_kv_username} }}"
+POSTGRES_PASSWORD="{{ .Data.data.${vault_kv_password} }}"
+{{ end }}
+%{ else }
+POSTGRES_USER="${username}"
+POSTGRES_PASSWORD="${password}"
+%{ endif }
 ${envs}
 EOF
       }
