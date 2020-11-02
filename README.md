@@ -59,7 +59,8 @@ The intentions in the table below will need to be put in place if you are going 
 | volume_destination | Postgres volume destination | string | "/var/lib/postgresql/data" | no |
 | use_host_volume | Use nomad host volume | bool | false | no |
 | use_canary | Switch to use canary deployment for Postgres | bool | no |
-| vault_secret.use_vault_kv | Set if want to access secrets from Vault | bool | false |
+| vault_secret.use_vault_provider | Set if want to access secrets from Vault | bool | true |
+| vault_secret.vault_kv_policy_name | Vault policy name to read secrets | string | "kv-secret" |
 | vault_secret.vault_kv_path | Path to the secret key in Vault | string | "secret/postgres" |
 | vault_secret.vault_kv_username_name | Secret key name in Vault kv path | string | "username" |
 | vault_secret.vault_kv_password_name | Secret key name in Vault kv path | string | "password" |
@@ -77,7 +78,7 @@ The intentions in the table below will need to be put in place if you are going 
 This module presents two ways of setting credentials (username and password). You can set them manually or upload secrets to Vault.
 
 ### Set credentials manually
-To set the credentials manually you first need to tell the module to not fetch credentials from vault. To do that, set `vault_secret.use_vault_kv` to `false` (see below for example). If this is done the module will use the variables `admin_user` and `admin_password` to set the postgres credentials. These will default to `postgres` if not set by the user.  
+To set the credentials manually you first need to tell the module to not fetch credentials from vault. To do that, set `vault_secret.use_vault_provider` to `false` (see below for example). If this is done the module will use the variables `admin_user` and `admin_password` to set the postgres credentials. These will default to `postgres` if not set by the user.  
 Below is an example on how to disable the use of vault credentials, and setting your own credentials.
 
 ```hcl-terraform
@@ -85,7 +86,7 @@ module "postgres" {
 ...
 
   vault_secret  = {
-                    use_vault_kv           = false,
+                    use_vault_provider     = false,
                     vault_kv_path          = "",
                     vault_kv_username_name = "",
                     vault_kv_password_name = ""
@@ -96,9 +97,9 @@ module "postgres" {
 ```
 
 ### Set credentials using Vault secrets
-By default `use_vault_kv` is set to `false`. 
+By default `use_vault_provider` is set to `false`. 
 However, when testing using the box (e.g. `make dev`) the postgres username and password is randomly generated and put in `secret/postgres` inside Vault, from the [01_generate_secrets_vault.yml](dev/ansible/01_generate_secrets_vault.yml) playbook. 
-This is an independet process and will run regardless of the `vault_secret.use_vault_kv` is `false/true`. 
+This is an independet process and will run regardless of the `vault_secret.use_vault_provider` is `false/true`. 
 
 If you want to use the automatically generated credentials in the box, you can do so by changing the `vault_secret` object as seen below:
 ```hcl-terraform
@@ -106,7 +107,8 @@ module "postgres" {
 ...
 
   vault_secret  = {
-                    use_vault_kv           = true,
+                    use_vault_provider     = true,
+                    vault_kv_policy_name   = "kv-secret"
                     vault_kv_path          = "secret/postgres",
                     vault_kv_username_name = "username",
                     vault_kv_password_name = "password"
@@ -121,7 +123,8 @@ module "postgres" {
 ...
 
   vault_secret  = {
-                    use_vault_kv           = true,
+                    use_vault_provider     = true,
+                    vault_kv_policy_name   = "kv-users-secret"
                     vault_kv_path          = "secret/services/postgres/users",
                     vault_kv_username_name = "guestuser",
                     vault_kv_password_name = "guestpassword"
@@ -150,7 +153,7 @@ module "postgres" {
   container_image                 = "postgres:12-alpine"
   container_port                  = 5432
   vault_secret                    = {
-                                      use_vault_kv           = false,
+                                      use_vault_provider           = false,
                                       vault_kv_path          = "",
                                       vault_kv_username_name = "",
                                       vault_kv_password_name = ""
