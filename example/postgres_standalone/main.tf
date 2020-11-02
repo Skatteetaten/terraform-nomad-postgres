@@ -12,7 +12,7 @@ module "postgres" {
   container_port                  = 5432
   vault_secret                    = {
                                       use_vault_kv           = true,
-                                      vault_kv_path          = "secret/postgres",
+                                      vault_kv_path          = "secret/data/postgres",
                                       vault_kv_username_name = "username",
                                       vault_kv_password_name = "password"
                                     }

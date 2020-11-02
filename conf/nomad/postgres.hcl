@@ -51,6 +51,11 @@ job "${service_name}" {
     task "postgresql" {
       driver = "docker"
 
+%{ if true } // todo: extract to variable (equal use_vault_kv)
+    vault {
+      policies = ["kv-secret"] // todo: extract to variable
+    }
+%{ endif }
     %{ if use_host_volume }
       volume_mount {
         volume      = "persistence"
