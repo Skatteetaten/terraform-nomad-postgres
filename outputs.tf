@@ -24,4 +24,3 @@ output "port" {
   description = "Postgres port"
   value       = data.template_file.template_nomad_job_postgres.vars.port
 }
-

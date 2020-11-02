@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.3.0 UNRELEASED]
+
+### Added
+- Added switch for canary deplyment #44
+
+### Changed
+- Removed box example [no issue]
+- Updated README with intentions section #46
+- Proper rendering of credentials #45
+
 ## [0.2.0]
 
 ### Added

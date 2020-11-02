@@ -2,9 +2,7 @@ locals {
   datacenters = join(",", var.nomad_datacenters)
   postgres_env_vars = join("\n",
     concat([
-      "POSTGRES_DB=${var.database}",
-      "POSTGRES_USER=${var.admin_user}",
-      "POSTGRES_PASSWORD=${var.admin_password}"
+      "POSTGRES_DB=${var.database}"
     ], var.container_environment_variables)
   )
 }
@@ -12,18 +10,24 @@ locals {
 data "template_file" "template_nomad_job_postgres" {
   template = file("${path.module}/conf/nomad/postgres.hcl")
   vars = {
-    service_name       = var.service_name
-    datacenters        = local.datacenters
-    namespace          = var.nomad_namespace
-    image              = var.container_image
-    port               = var.container_port
-    username           = var.admin_user
-    password           = var.admin_password
-    database           = var.database
-    nomad_host_volume  = var.nomad_host_volume
-    volume_destination = var.volume_destination
-    use_host_volume    = var.use_host_volume
-    envs               = local.postgres_env_vars
+    service_name         = var.service_name
+    datacenters          = local.datacenters
+    namespace            = var.nomad_namespace
+    image                = var.container_image
+    port                 = var.container_port
+    username             = var.admin_user
+    password             = var.admin_password
+    use_vault_provider   = var.vault_secret.use_vault_provider
+    vault_kv_policy_name = var.vault_secret.vault_kv_policy_name
+    vault_kv_path        = var.vault_secret.vault_kv_path
+    vault_kv_username    = var.vault_secret.vault_kv_username_name
+    vault_kv_password    = var.vault_secret.vault_kv_password_name
+    database             = var.database
+    nomad_host_volume    = var.nomad_host_volume
+    volume_destination   = var.volume_destination
+    use_host_volume      = var.use_host_volume
+    use_canary           = var.use_canary
+    envs                 = local.postgres_env_vars
   }
 }
 

@@ -37,16 +37,19 @@ variable "container_port" {
 variable "admin_user" {
   type        = string
   description = "Postgres admin user"
+  default     = "postgres"
 }
 
 variable "admin_password" {
   type        = string
   description = "Postgres admin password"
+  default     = "postgres"
 }
 
 variable "database" {
   type        = string
   description = "Postgres database on init"
+  default     = "metastore"
 }
 
 # https://github.com/docker-library/docs/blob/master/postgres/README.md#environment-variables
@@ -66,4 +69,28 @@ variable "use_host_volume" {
   type        = bool
   description = "Switch for nomad jobs to use host volume feature"
   default     = false
+}
+
+variable "use_canary" {
+  type        = bool
+  description = "Switch to use canary deployment for Postgres"
+  default     = false
+}
+
+variable "vault_secret" {
+  type = object({
+    use_vault_provider     = bool,
+    vault_kv_policy_name   = string,
+    vault_kv_path          = string,
+    vault_kv_username_name = string,
+    vault_kv_password_name = string
+  })
+  description = "Set of properties to be able to fetch secret from vault"
+  default = {
+    use_vault_provider     = false
+    vault_kv_policy_name   = "kv-secret"
+    vault_kv_path          = "secret/postgres"
+    vault_kv_username_name = "username"
+    vault_kv_password_name = "password"
+  }
 }

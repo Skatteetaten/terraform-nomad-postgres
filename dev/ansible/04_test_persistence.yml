@@ -58,19 +58,11 @@
   tags: test
 
 - name: Register username
-  shell:
-    cmd: vault kv get -field='username' secret/postgres
-  environment:
-      VAULT_ADDR: "{{ vault_addr }}"
-      VAULT_TOKEN: "{{ vault_token }}"
+  shell: docker exec $(docker ps -a -q --filter ancestor="postgres:12-alpine") bash -c "env | grep POSTGRES_USER" | cut -f2 -d"="
   register: username
 
 - name: Register password
-  shell:
-    cmd: vault kv get -field='password' secret/postgres
-  environment:
-      VAULT_ADDR: "{{ vault_addr }}"
-      VAULT_TOKEN: "{{ vault_token }}"
+  shell: docker exec $(docker ps -a -q --filter ancestor="postgres:12-alpine") bash -c "env | grep POSTGRES_PASSWORD" | cut -f2 -d"="
   register: password
   tags: test
 
@@ -137,7 +129,7 @@
 
 - name: Terraform apply to restart purged postgres job
   terraform:
-    project_path: ../../example
+    project_path: ../../example/postgres_standalone
     force_init: true
     state: present
   register: terraform
