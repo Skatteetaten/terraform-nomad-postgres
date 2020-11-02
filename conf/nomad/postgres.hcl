@@ -50,6 +50,11 @@ job "${service_name}" {
 
     task "postgresql" {
       driver = "docker"
+    %{ if use_vault_provider }
+      vault {
+        policies = "${vault_kv_policy_name}"
+      }
+    %{ endif }
 
     %{ if use_host_volume }
       volume_mount {
@@ -73,7 +78,7 @@ job "${service_name}" {
         change_mode = "noop"
         env         = true
         data        = <<EOF
-%{ if use_vault_kv }
+%{ if use_vault_provider }
 {{ with secret "${vault_kv_path}" }}
 POSTGRES_USER="{{ .Data.data.${vault_kv_username} }}"
 POSTGRES_PASSWORD="{{ .Data.data.${vault_kv_password} }}"

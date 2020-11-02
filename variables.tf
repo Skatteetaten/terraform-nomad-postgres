@@ -79,14 +79,16 @@ variable "use_canary" {
 
 variable "vault_secret" {
   type = object({
-    use_vault_kv           = bool,
+    use_vault_provider     = bool,
+    vault_kv_policy_name   = string,
     vault_kv_path          = string,
     vault_kv_username_name = string,
     vault_kv_password_name = string
   })
   description = "Set of properties to be able to fetch secret from vault"
   default = {
-    use_vault_kv           = false
+    use_vault_provider     = false
+    vault_kv_policy_name   = "kv-secret"
     vault_kv_path          = "secret/postgres"
     vault_kv_username_name = "username"
     vault_kv_password_name = "password"
