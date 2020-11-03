@@ -74,7 +74,7 @@ variable "use_host_volume" {
 variable "use_canary" {
   type        = bool
   description = "Switch to use canary deployment for Postgres"
-  default     = false
+  default     = true
 }
 
 variable "vault_secret" {
@@ -87,9 +87,9 @@ variable "vault_secret" {
   })
   description = "Set of properties to be able to fetch secret from vault"
   default = {
-    use_vault_provider     = false
+    use_vault_provider     = true
     vault_kv_policy_name   = "kv-secret"
-    vault_kv_path          = "secret/postgres"
+    vault_kv_path          = "secret/data/postgres"
     vault_kv_username_name = "username"
     vault_kv_password_name = "password"
   }
