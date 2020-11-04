@@ -61,7 +61,7 @@ The intentions in the table below will need to be put in place if you are going 
 | use_canary | Switch to use canary deployment for Postgres | bool | no |
 | vault_secret.use_vault_provider | Set if want to access secrets from Vault | bool | true |
 | vault_secret.vault_kv_policy_name | Vault policy name to read secrets | string | "kv-secret" |
-| vault_secret.vault_kv_path | Path to the secret key in Vault | string | "secret/postgres" |
+| vault_secret.vault_kv_path | Path to the secret key in Vault | string | "secret/data/postgres" |
 | vault_secret.vault_kv_username_name | Secret key name in Vault kv path | string | "username" |
 | vault_secret.vault_kv_password_name | Secret key name in Vault kv path | string | "password" |
 
