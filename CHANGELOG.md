@@ -4,11 +4,17 @@
 
 ### Added
 - Added switch for canary deplyment #44
+- Added resource variables #51
 
 ### Changed
 - Removed box example [no issue]
 - Updated README with intentions section #46
 - Proper rendering of credentials #45
+- Updated box version #49
+- Removed `dev` target from makefile [no issue]
+
+### Fixed
+- 50% fixed role fatal error. Only works if `use_vault_provider=false` #15
 
 ## [0.2.0]
 

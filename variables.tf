@@ -94,3 +94,15 @@ variable "vault_secret" {
     vault_kv_password_name = "password"
   }
 }
+
+variable "memory" {
+  type        = number
+  description = "Memory allocation for Postgres"
+  default     = 428
+}
+
+variable "cpu" {
+  type        = number
+  description = "CPU allocation for Postgres"
+  default     = 350
+}

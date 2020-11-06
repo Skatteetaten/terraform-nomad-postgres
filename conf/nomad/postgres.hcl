@@ -37,7 +37,11 @@ job "${service_name}" {
         type      = "script"
         task      = "postgresql"
         command   = "/usr/local/bin/pg_isready"
+      %{ if use_vault_provider }
         args      = ["-U", "$POSTGRES_USER"]
+      %{ else }
+        args      = ["-U", "${username}"]
+      %{ endif }
         interval  = "30s"
         timeout   = "2s"
       }
@@ -45,7 +49,6 @@ job "${service_name}" {
       connect {
         sidecar_service {}
       }
-
     }
 
     task "postgresql" {
@@ -89,6 +92,11 @@ POSTGRES_PASSWORD="${password}"
 %{ endif }
 ${envs}
 EOF
+      }
+
+      resources {
+        memory = "${memory}"
+        cpu    = "${cpu}"
       }
     }
   }
