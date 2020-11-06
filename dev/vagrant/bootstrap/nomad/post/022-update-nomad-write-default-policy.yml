@@ -1,6 +1,6 @@
 - name: Fetch bootstrap token nomad
   shell:
-      cmd: vault kv get -field=secret-id secret/nomad-bootstrap-token
+      cmd: vault kv get -field=secret-id secret/example/nomad-bootstrap-token
   when: lookup('env', 'nomad_acl') | bool
   register: bootstrap_token
   environment:

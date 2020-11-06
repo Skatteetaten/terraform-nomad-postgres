@@ -59,11 +59,13 @@ The intentions in the table below will need to be put in place if you are going 
 | volume_destination | Postgres volume destination | string | "/var/lib/postgresql/data" | no |
 | use_host_volume | Use nomad host volume | bool | false | no |
 | use_canary | Switch to use canary deployment for Postgres | bool | no |
-| vault_secret.use_vault_provider | Set if want to access secrets from Vault | bool | true |
-| vault_secret.vault_kv_policy_name | Vault policy name to read secrets | string | "kv-secret" |
-| vault_secret.vault_kv_path | Path to the secret key in Vault | string | "secret/data/postgres" |
-| vault_secret.vault_kv_username_name | Secret key name in Vault kv path | string | "username" |
-| vault_secret.vault_kv_password_name | Secret key name in Vault kv path | string | "password" |
+| vault_secret.use_vault_provider | Set if want to access secrets from Vault | bool | true | no |
+| vault_secret.vault_kv_policy_name | Vault policy name to read secrets | string | "kv-secret" | no |
+| vault_secret.vault_kv_path | Path to the secret key in Vault | string | "secret/data/postgres" | no |
+| vault_secret.vault_kv_username_name | Secret key name in Vault kv path | string | "username" | no |
+| vault_secret.vault_kv_password_name | Secret key name in Vault kv path | string | "password" | no |
+| memory | Memory allocation for Postgres in MB | number | 428 | no |
+| cpu | CPU allocation for Postgres in MHz | number | 350 | no |
 
 ## Outputs
 | Name | Description | Type |
