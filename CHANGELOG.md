@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.4.0 UNRELEASED]
+
+### Changed
+- Removed `failed_when` in `01-create_vault_policy_to_read_secrets.yml` & updated README [no issue]
+
 ## [0.3.0]
 
 ### Added
@@ -44,5 +49,4 @@
 ## [0.0.1]
 
 ### Added
-
 - Initial draft

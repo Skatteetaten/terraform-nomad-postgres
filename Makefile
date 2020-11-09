@@ -77,7 +77,8 @@ clean: destroy-box remove-tmp
 
 proxy:
 	consul intention create -token=master postgres-local postgres
-	consul connect proxy -token master -service postgres-local -upstream postgres:9000 -log-level debug
+	consul connect proxy -token master -service postgres-local -upstream postgres:5432 -log-level debug
+
 # helper commands
 update-box:
 	@SSL_CERT_FILE=${SSL_CERT_FILE} CURL_CA_BUNDLE=${CURL_CA_BUNDLE} vagrant box update || (echo '\n\nIf you get an SSL error you might be behind a transparent proxy. \nMore info https://github.com/fredrikhgrelland/vagrant-hashistack/blob/master/README.md#proxy\n\n' && exit 2)
@@ -85,5 +86,3 @@ update-box:
 pre-commit: check_for_docker_binary check_for_terraform_binary
 	docker run -e RUN_LOCAL=true -v "${PWD}:/tmp/lint/" github/super-linter
 	terraform fmt -recursive && echo "\e[32mTrying to prettify all .tf files.\e[0m"
-proxy-to-postgres:
-	docker run --rm -it --network host consul:1.8 consul connect proxy -service postgres-local -upstream postgres:5555 -log-level debug
