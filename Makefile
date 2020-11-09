@@ -77,7 +77,7 @@ clean: destroy-box remove-tmp
 
 proxy:
 	consul intention create -token=master postgres-local postgres
-	consul connect proxy -token master -service postgres-local -upstream postgres:9000 -log-level debug
+	consul connect proxy -token master -service postgres-local -upstream postgres:5432 -log-level debug
 
 # helper commands
 update-box:

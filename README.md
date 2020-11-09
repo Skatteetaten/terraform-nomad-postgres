@@ -50,7 +50,7 @@ make proxy
 Further, you can verify the connection by connecting with the psql CLI ([required software](#required-software)) using the command bellow.
 You can find the `username` and `password` in the [Vault UI (localhost:8200)](http://localhost:8200/).
 ```sh
-psql "dbname=metastore host=127.0.0.1 user=<username> password=<password> port=9000 sslmode=disable"
+psql "dbname=metastore host=127.0.0.1 user=<username> password=<password> port=5432 sslmode=disable"
 ```
 
 ### Intentions
