@@ -54,7 +54,7 @@ job "${service_name}" {
         driver = "docker"
         resources {
           cpu    = 500
-          memory = 1000
+          memory = 1024
         }
       }
     }
