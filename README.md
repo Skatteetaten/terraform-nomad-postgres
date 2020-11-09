@@ -7,19 +7,27 @@ This module is IaC - infrastructure as code which contains a nomad job of [postg
 
 ## Content
 1. [Requirements](#requirements)
-    1. [Required software](#required-software)
+    1. [Required modules](#required-modules)
+    2. [Required software](#required-software)
 2. [Usage](#usage)
-    1. [Providers](#providers)
+    1. [Verifying setup](#verifying-setup)
     2. [Intentions](#intentions)
+    3. [Providers](#providers)
 3. [Inputs](#inputs)
 4. [Outputs](#outputs)
 5. [Secrets & credentials](#secrets--credentials)
+    1. [Set credentials manually](#set-credentials-manually)
+    2. [Set credentials using Vault secrets](#set-credentials-using-vault-secrets)
 6. [Volumes](#volumes)
 7. [Example usage](#example-usage)
-    1. [Verifying setup](#verifying-setup)
+9. [Contributors](#contributors)
 8. [License](#license)
 
 ## Requirements
+
+### Required modules
+No required modules.
+
 ### Required software
 - [GNU make](https://man7.org/linux/man-pages/man1/make.1.html)
 - [Docker](https://www.docker.com/)
@@ -31,8 +39,11 @@ The following command will run a standalone instance of postgres found in the [e
 make test
 ```
 
-### Providers
-- [Nomad](https://registry.terraform.io/providers/hashicorp/nomad/latest/docs)
+### Verifying setup
+You can verify that postgres is running by checking the connection. This can be done using the `consul` docker image to set up a proxy. Check out the [required software](#required-software) section.
+```shell script
+make proxy-to-postgres
+```
 
 ### Intentions
 The intentions in the table below will need to be put in place if you are going to use this module in a hashistack ecosystem, we have done so in our vagrantbox example ([00_create_intetion.yml](dev/ansible/00_create_intention.yml)).
@@ -42,6 +53,9 @@ The intentions in the table below will need to be put in place if you are going 
 | postgres-local => postgres  | allow |
 
 > :warning: Note that these intentions needs to be created if you are using the module in another module.
+
+### Providers
+- [Nomad](https://registry.terraform.io/providers/hashicorp/nomad/latest/docs)
 
 ## Inputs
 | Name | Description | Type | Default | Required |
@@ -170,11 +184,13 @@ module "postgres" {
 }
 ```
 
-### Verifying setup
-You can verify that postgres is running by checking the connection. This can be done using the `consul` docker image to set up a proxy. Check out the [required software](#required-software) section.
-```shell script
-make proxy-to-postgres
-```
+## Contributors
+[<img src="https://avatars0.githubusercontent.com/u/40291976?s=64&v=4">](https://github.com/fredrikhgrelland)
+[<img src="https://avatars2.githubusercontent.com/u/29984156?s=64&v=4">](https://github.com/claesgill)
+[<img src="https://avatars3.githubusercontent.com/u/15572799?s=64&v=4">](https://github.com/zhenik)
+[<img src="https://avatars3.githubusercontent.com/u/67954397?s=64&v=4">](https://github.com/Neha-Sinha2305)
+[<img src="https://avatars3.githubusercontent.com/u/71001093?s=64&v=4">](https://github.com/dangernil)
+[<img src="https://avatars1.githubusercontent.com/u/51820995?s=64&v=4">](https://github.com/pdmthorsrud)
 
 ## License
 This work is licensed under Apache 2 License. See [LICENSE](./LICENSE) for full details.
