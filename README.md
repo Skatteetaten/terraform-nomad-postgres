@@ -7,32 +7,51 @@ This module is IaC - infrastructure as code which contains a nomad job of [postg
 
 ## Content
 1. [Requirements](#requirements)
-    1. [Required software](#required-software)
+    1. [Required modules](#required-modules)
+    2. [Required software](#required-software)
 2. [Usage](#usage)
-    1. [Providers](#providers)
-    2. [Intentions](#intentions)
-3. [Inputs](#inputs)
-4. [Outputs](#outputs)
-5. [Secrets & credentials](#secrets--credentials)
-6. [Volumes](#volumes)
-7. [Example usage](#example-usage)
     1. [Verifying setup](#verifying-setup)
-8. [License](#license)
+    2. [Intentions](#intentions)
+    3. [Providers](#providers)
+3. [Example usage](#example-usage)
+4. [Inputs](#inputs)
+5. [Outputs](#outputs)
+6. [Secrets & credentials](#secrets--credentials)
+    1. [Set credentials manually](#set-credentials-manually)
+    2. [Set credentials using Vault secrets](#set-credentials-using-vault-secrets)
+7. [Volumes](#volumes)
+8. [Contributors](#contributors)
+9. [License](#license)
 
 ## Requirements
+
+### Required modules
+No required modules.
+
 ### Required software
 - [GNU make](https://man7.org/linux/man-pages/man1/make.1.html)
 - [Docker](https://www.docker.com/)
+- [Consul](https://releases.hashicorp.com/consul/)
+- [psql CLI](https://www.postgresqltutorial.com/install-postgresql/)
 
 ## Usage
 The following command will run a standalone instance of postgres found in the [example](/example) folder.
 
-```text
+```sh
 make test
 ```
 
-### Providers
-- [Nomad](https://registry.terraform.io/providers/hashicorp/nomad/latest/docs)
+### Verifying setup
+You can verify that Postgres is running by checking the connection. The following command uses Consul ([required software](#required-software)) to set up a proxy.
+```sh
+make proxy
+```
+
+Further, you can verify the connection by connecting with the psql CLI ([required software](#required-software)) using the command bellow.
+You can find the `username` and `password` in the [Vault UI (localhost:8200)](http://localhost:8200/).
+```sh
+psql "dbname=metastore host=127.0.0.1 user=<username> password=<password> port=5432 sslmode=disable"
+```
 
 ### Intentions
 The intentions in the table below will need to be put in place if you are going to use this module in a hashistack ecosystem, we have done so in our vagrantbox example ([00_create_intetion.yml](dev/ansible/00_create_intention.yml)).
@@ -42,6 +61,41 @@ The intentions in the table below will need to be put in place if you are going 
 | postgres-local => postgres  | allow |
 
 > :warning: Note that these intentions needs to be created if you are using the module in another module.
+
+### Providers
+- [Nomad](https://registry.terraform.io/providers/hashicorp/nomad/latest/docs)
+
+## Example usage
+The example-code shows some of the variables you need to provide to use this module. See the [postgres_standalone](example/postgres_standalone) example for more details.
+
+```hcl-terraform
+module "postgres" {
+  source = "github.com/fredrikhgrelland/terraform-nomad-postgres.git?ref=0.2.0"
+
+  # nomad
+  nomad_datacenters = ["dc1"]
+  nomad_namespace   = "default"
+  nomad_host_volume = "persistence"
+
+  # postgres
+  service_name                    = "postgres"
+  container_image                 = "postgres:12-alpine"
+  container_port                  = 5432
+  vault_secret                    = {
+                                      use_vault_provider     = false,
+                                      vault_kv_path          = "",
+                                      vault_kv_username_name = "",
+                                      vault_kv_password_name = ""
+                                    }
+  admin_user                      = "postgres"
+  admin_password                  = "postgres"
+  database                        = "metastore"
+  volume_destination              = "/var/lib/postgresql/data"
+  use_host_volume                 = true
+  use_canary                      = false
+  container_environment_variables = ["PGDATA=/var/lib/postgresql/data/"]
+}
+```
 
 ## Inputs
 | Name | Description | Type | Default | Required |
@@ -138,43 +192,14 @@ module "postgres" {
 Module (optionally) supports [host volume](https://www.nomadproject.io/docs/job-specification/volume) to store postgres data.
 If the `use_host_volume` is set to `true` (default: false), Postgres data will be available in root `/persistence/postgres` folder inside the Vagrant box.
 
-## Example usage
-The example-code shows some of variables you need to provide to use this module. See the [postgres_standalone](example/postgres_standalone) example for more details.
 
-```hcl-terraform
-module "postgres" {
-  source = "github.com/fredrikhgrelland/terraform-nomad-postgres.git?ref=0.2.0"
-
-  # nomad
-  nomad_datacenters = ["dc1"]
-  nomad_namespace   = "default"
-  nomad_host_volume = "persistence"
-
-  # postgres
-  service_name                    = "postgres"
-  container_image                 = "postgres:12-alpine"
-  container_port                  = 5432
-  vault_secret                    = {
-                                      use_vault_provider           = false,
-                                      vault_kv_path          = "",
-                                      vault_kv_username_name = "",
-                                      vault_kv_password_name = ""
-                                    }
-  admin_user                      = "postgres"
-  admin_password                  = "postgres"
-  database                        = "metastore"
-  volume_destination              = "/var/lib/postgresql/data"
-  use_host_volume                 = true
-  use_canary                      = false
-  container_environment_variables = ["PGDATA=/var/lib/postgresql/data/"]
-}
-```
-
-### Verifying setup
-You can verify that postgres is running by checking the connection. This can be done using the `consul` docker image to set up a proxy. Check out the [required software](#required-software) section.
-```shell script
-make proxy-to-postgres
-```
+## Contributors
+[<img src="https://avatars0.githubusercontent.com/u/40291976?s=64&v=4">](https://github.com/fredrikhgrelland)
+[<img src="https://avatars2.githubusercontent.com/u/29984156?s=64&v=4">](https://github.com/claesgill)
+[<img src="https://avatars3.githubusercontent.com/u/15572799?s=64&v=4">](https://github.com/zhenik)
+[<img src="https://avatars3.githubusercontent.com/u/67954397?s=64&v=4">](https://github.com/Neha-Sinha2305)
+[<img src="https://avatars3.githubusercontent.com/u/71001093?s=64&v=4">](https://github.com/dangernil)
+[<img src="https://avatars1.githubusercontent.com/u/51820995?s=64&v=4">](https://github.com/pdmthorsrud)
 
 ## License
 This work is licensed under Apache 2 License. See [LICENSE](./LICENSE) for full details.
