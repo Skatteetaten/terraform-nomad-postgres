@@ -43,11 +43,13 @@ variable "admin_user" {
 variable "resource_proxy" {
   type = object({
     cpu     = number,
-    memory  = number
+    memory  = number,
+    description = string
   })
   default = {
     cpu         = 500,
-    memory      = 1024
+    memory      = 1024,
+    description = "Postgres proxy resources"
   }
 }
 
