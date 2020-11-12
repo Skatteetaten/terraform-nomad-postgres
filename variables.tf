@@ -40,6 +40,18 @@ variable "admin_user" {
   default     = "postgres"
 }
 
+variable "resource_proxy" {
+  type = object({
+    cpu     = number,
+    memory  = number
+  })
+  default = {
+    cpu         = 500,
+    memory      = 1024
+    description = "Postgres proxy resources"
+  }
+}
+
 variable "admin_password" {
   type        = string
   description = "Postgres admin password"
