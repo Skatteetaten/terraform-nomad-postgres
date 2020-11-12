@@ -48,7 +48,6 @@ variable "resource_proxy" {
   default = {
     cpu         = 500,
     memory      = 1024
-    description = "Postgres proxy resources"
   }
 }
 
