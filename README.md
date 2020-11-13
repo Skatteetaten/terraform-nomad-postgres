@@ -120,7 +120,7 @@ module "postgres" {
 | vault_secret.vault_kv_password_name | Secret key name in Vault kv path | string | "password" | no |
 | memory | Memory allocation for Postgres in MB | number | 428 | no |
 | cpu | CPU allocation for Postgres in MHz | number | 350 | no |
-| resource_proxy | Resource allocations for proxy | obj(number, number) |	{ cpu = 200, memory = 128} |	no |
+| resource_proxy | Resource allocations for proxy | obj(number, number) |	{ cpu = 500, memory = 1024} |	no |
  	
 ## Outputs
 | Name | Description | Type |
