@@ -50,6 +50,10 @@ variable "resource_proxy" {
     cpu         = 500
     memory      = 1024
   }
+  validation {
+    condition     = var.resource_proxy.cpu >= 500 && var.resource_proxy.memory >= 1024
+    error_message = "Proxy resource must be at least: cpu=500, memory=1024."
+  }
 }
 
 variable "admin_password" {
