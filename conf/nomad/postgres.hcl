@@ -47,7 +47,15 @@ job "${service_name}" {
       }
 
       connect {
-        sidecar_service {}
+        sidecar_service {
+        }
+
+        sidecar_task {
+          resources {
+            cpu = "${cpu_proxy}"
+            memory = "${memory_proxy}"
+          }
+        }
       }
     }
 

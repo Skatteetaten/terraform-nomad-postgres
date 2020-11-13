@@ -40,6 +40,22 @@ variable "admin_user" {
   default     = "postgres"
 }
 
+variable "resource_proxy" {
+  type = object({
+    cpu     = number,
+    memory  = number
+  })
+  description = "Postgres proxy resources"
+  default = {
+    cpu         = 200
+    memory      = 128
+  }
+  validation {
+    condition     = var.resource_proxy.cpu >= 200 && var.resource_proxy.memory >= 128
+    error_message = "Proxy resource must be at least: cpu=200, memory=128."
+  }
+}
+
 variable "admin_password" {
   type        = string
   description = "Postgres admin password"

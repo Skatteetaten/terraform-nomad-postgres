@@ -11,6 +11,8 @@ data "template_file" "template_nomad_job_postgres" {
   template = file("${path.module}/conf/nomad/postgres.hcl")
   vars = {
     service_name         = var.service_name
+    cpu_proxy            = var.resource_proxy.cpu
+    memory_proxy         = var.resource_proxy.memory
     datacenters          = local.datacenters
     namespace            = var.nomad_namespace
     image                = var.container_image
