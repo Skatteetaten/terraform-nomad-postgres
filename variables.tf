@@ -88,9 +88,9 @@ variable "use_host_volume" {
 }
 
 variable "host_volume_name" {
-  type = string
+  type        = string
   description = "Name of the provided host volume"
-  default = "persistence"
+  default     = "persistence"
 }
 
 variable "use_canary" {
