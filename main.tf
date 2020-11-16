@@ -28,6 +28,7 @@ data "template_file" "template_nomad_job_postgres" {
     nomad_host_volume    = var.nomad_host_volume
     volume_destination   = var.volume_destination
     use_host_volume      = var.use_host_volume
+    host_volume_name     = var.host_volume_name
     use_canary           = var.use_canary
     memory               = var.memory
     cpu                  = var.cpu

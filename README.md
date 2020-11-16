@@ -92,7 +92,8 @@ module "postgres" {
   database                        = "metastore"
   volume_destination              = "/var/lib/postgresql/data"
   use_host_volume                 = true
-  use_canary                      = false
+  host_volume_path                = "persistence"
+  use_canary                      = true
   container_environment_variables = ["PGDATA=/var/lib/postgresql/data/"]
 }
 ```
@@ -112,6 +113,7 @@ module "postgres" {
 | container_environment_variables | Postgres container environement variables | list(string) | ["PGDATA=/var/lib/postgresql/data"] | no |
 | volume_destination | Postgres volume destination | string | "/var/lib/postgresql/data" | no |
 | use_host_volume | Use nomad host volume | bool | false | no |
+| host_volume_name | Name of the provided host volume | string | "persistence" | no |
 | use_canary | Switch to use canary deployment for Postgres | bool | no |
 | vault_secret.use_vault_provider | Set if want to access secrets from Vault | bool | true | no |
 | vault_secret.vault_kv_policy_name | Vault policy name to read secrets | string | "kv-secret" | no |
@@ -192,7 +194,6 @@ module "postgres" {
 ## Volumes
 Module (optionally) supports [host volume](https://www.nomadproject.io/docs/job-specification/volume) to store postgres data.
 If the `use_host_volume` is set to `true` (default: false), Postgres data will be available in root `/persistence/postgres` folder inside the Vagrant box.
-
 
 ## Contributors
 [<img src="https://avatars0.githubusercontent.com/u/40291976?s=64&v=4">](https://github.com/fredrikhgrelland)

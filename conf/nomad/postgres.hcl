@@ -23,7 +23,7 @@ job "${service_name}" {
     }
 
   %{ if use_host_volume }
-    volume "persistence" {
+    volume "${host_volume_name}" {
       type      = "host"
       source    = "${nomad_host_volume}"
       read_only = false

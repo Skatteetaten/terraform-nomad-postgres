@@ -87,6 +87,12 @@ variable "use_host_volume" {
   default     = false
 }
 
+variable "host_volume_name" {
+  type = string
+  description = "Name of the provided host volume"
+  default = "persistence"
+}
+
 variable "use_canary" {
   type        = bool
   description = "Switch to use canary deployment for Postgres"
