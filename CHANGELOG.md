@@ -4,9 +4,11 @@
 
 ### Added
 - Expand resources for side_car #56
+- Can now skip linter using label 'skip-linter' #52
 
 ### Changed
 - Removed `failed_when` in `01-create_vault_policy_to_read_secrets.yml` & updated README [no issue]
+- Switch for using local images from GitLab or from Dockerhub [no issue]
 
 ## [0.3.0]
 

@@ -122,3 +122,21 @@ variable "cpu" {
   description = "CPU allocation for Postgres"
   default     = 350
 }
+
+variable "use_custom_images" {
+  type        = bool
+  description = "Using custom images is typically used when you have exceeded the number of pulls from Dockerhub"
+  default     = false
+}
+
+variable "custom_postgres_image" {
+  type        = string
+  description = "Custom Postgres image"
+  default     = "gitlab-container-registry.service.v2.minerva.loc/datastack/terraform-nomad-postgres/postgres:12-alpine"
+}
+
+variable "custom_envoyproxy_image" {
+  type        = string
+  description = "Custom Envoyproxy image"
+  default     = "gitlab-container-registry.service.v2.minerva.loc/datastack/terraform-nomad-postgres/envoyproxy:v1.16.1"
+}

@@ -20,8 +20,9 @@ This module is IaC - infrastructure as code which contains a nomad job of [postg
     1. [Set credentials manually](#set-credentials-manually)
     2. [Set credentials using Vault secrets](#set-credentials-using-vault-secrets)
 7. [Volumes](#volumes)
-8. [Contributors](#contributors)
-9. [License](#license)
+8. [Images](#images)
+9. [Contributors](#contributors)
+10. [License](#license)
 
 ## Requirements
 
@@ -92,7 +93,8 @@ module "postgres" {
   database                        = "metastore"
   volume_destination              = "/var/lib/postgresql/data"
   use_host_volume                 = true
-  use_canary                      = false
+  use_canary                      = true
+  use_gitlab_images               = false
   container_environment_variables = ["PGDATA=/var/lib/postgresql/data/"]
 }
 ```
@@ -121,6 +123,9 @@ module "postgres" {
 | memory | Memory allocation for Postgres in MB | number | 428 | no |
 | cpu | CPU allocation for Postgres in MHz | number | 350 | no |
 | resource_proxy | Resource allocations for proxy | obj(number, number) |	{ <br> cpu = 200, <br> memory = 128 <br> } |	no |
+| use_custom_images | Using custom images is typically used when you have exceeded the number of pulls from Dockerhub | bool | false | no |
+| custom_postgres_image | Custom Postgres image | string | gitlab-container-registry.service.v2.minerva.loc/datastack/terraform-nomad-postgres/postgres:12-alpine | no |
+| custom_envoyproxy_image | Custom Envoyproxy image | string | gitlab-container-registry.service.v2.minerva.loc/datastack/terraform-nomad-postgres/envoyproxy:v1.16.1 | no |
  	
 ## Outputs
 | Name | Description | Type |
@@ -193,6 +198,11 @@ module "postgres" {
 Module (optionally) supports [host volume](https://www.nomadproject.io/docs/job-specification/volume) to store postgres data.
 If the `use_host_volume` is set to `true` (default: false), Postgres data will be available in root `/persistence/postgres` folder inside the Vagrant box.
 
+## Images
+Due to [Docker Hub rate limits](https://www.docker.com/increase-rate-limits?utm_source=docker&utm_medium=web%20referral&utm_campaign=pull%20limits%20home%20page&utm_budget=) we implemented a way of using custom provided images.
+Our images are uploaded to GitLab, but you can provide your own by overwriting `gitlab_postgres_image` and `gitlab_envoyproxy_image`. See the [inputs](#inputs) section for additional information.
+
+To use the custom images you need to set `use_custom_images = true`.
 
 ## Contributors
 [<img src="https://avatars0.githubusercontent.com/u/40291976?s=64&v=4">](https://github.com/fredrikhgrelland)

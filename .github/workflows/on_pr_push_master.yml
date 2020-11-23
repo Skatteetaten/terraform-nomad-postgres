@@ -9,6 +9,7 @@ on:
 jobs:
   linter:
     runs-on: ubuntu-latest
+    if: "${{ !contains(github.event.pull_request.labels.*.name, 'skip-linter') }}"
     steps:
       - uses: actions/checkout@v2
       - name: Super-Linter

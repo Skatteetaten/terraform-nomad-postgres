@@ -21,5 +21,6 @@ module "postgres" {
   volume_destination              = "/var/lib/postgresql/data"
   use_host_volume                 = true
   use_canary                      = true
+  use_custom_images               = false
   container_environment_variables = ["PGDATA=/var/lib/postgresql/data/"]
 }

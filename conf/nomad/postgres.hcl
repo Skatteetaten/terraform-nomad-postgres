@@ -51,6 +51,11 @@ job "${service_name}" {
         }
 
         sidecar_task {
+          %{ if use_custom_images }
+          config {
+            image = "${custom_envoyproxy_image}"
+          }
+          %{ endif }
           resources {
             cpu = "${cpu_proxy}"
             memory = "${memory_proxy}"
