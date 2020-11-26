@@ -91,8 +91,8 @@ job "${service_name}" {
         data        = <<EOF
 %{ if use_vault_provider }
 {{ with secret "${vault_kv_path}" }}
-POSTGRES_USER="{{ .Data.data.${vault_kv_username} }}"
-POSTGRES_PASSWORD="{{ .Data.data.${vault_kv_password} }}"
+POSTGRES_USER="{{ .Data.data.${vault_kv_field_username} }}"
+POSTGRES_PASSWORD="{{ .Data.data.${vault_kv_field_password} }}"
 {{ end }}
 %{ else }
 POSTGRES_USER="${username}"
