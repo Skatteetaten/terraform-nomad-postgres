@@ -82,10 +82,10 @@ module "postgres" {
   container_image                 = "postgres:12-alpine"
   container_port                  = 5432
   vault_secret                    = {
-                                      use_vault_provider     = false,
-                                      vault_kv_path          = "",
-                                      vault_kv_username_name = "",
-                                      vault_kv_password_name = ""
+                                      use_vault_provider      = false,
+                                      vault_kv_path           = "",
+                                      vault_kv_field_username = "",
+                                      vault_kv_field_password = ""
                                     }
   admin_user                      = "postgres"
   admin_password                  = "postgres"
@@ -116,8 +116,8 @@ module "postgres" {
 | vault_secret.use_vault_provider | Set if want to access secrets from Vault | bool | true | no |
 | vault_secret.vault_kv_policy_name | Vault policy name to read secrets | string | "kv-secret" | no |
 | vault_secret.vault_kv_path | Path to the secret key in Vault | string | "secret/data/postgres" | no |
-| vault_secret.vault_kv_username_name | Secret key name in Vault kv path | string | "username" | no |
-| vault_secret.vault_kv_password_name | Secret key name in Vault kv path | string | "password" | no |
+| vault_secret.vault_kv_field_username | Secret key name in Vault kv path | string | "username" | no |
+| vault_secret.vault_kv_field_password | Secret key name in Vault kv path | string | "password" | no |
 | memory | Memory allocation for Postgres in MB | number | 428 | no |
 | cpu | CPU allocation for Postgres in MHz | number | 350 | no |
 | resource_proxy | Resource allocations for proxy | obj(number, number) |	{ <br> cpu = 200, <br> memory = 128 <br> } |	no |
@@ -143,10 +143,10 @@ module "postgres" {
 ...
 
   vault_secret  = {
-                    use_vault_provider     = false,
-                    vault_kv_path          = "",
-                    vault_kv_username_name = "",
-                    vault_kv_password_name = ""
+                    use_vault_provider      = false,
+                    vault_kv_path           = "",
+                    vault_kv_field_username = "",
+                    vault_kv_field_password = ""
                   }
   admin_user     = "myadminuser"     # default 'postgres'
   admin_password = "myadminpassword" # default 'postgres'
@@ -164,11 +164,11 @@ module "postgres" {
 ...
 
   vault_secret  = {
-                    use_vault_provider     = true,
-                    vault_kv_policy_name   = "kv-secret"
-                    vault_kv_path          = "secret/postgres",
-                    vault_kv_username_name = "username",
-                    vault_kv_password_name = "password"
+                    use_vault_provider      = true,
+                    vault_kv_policy_name    = "kv-secret"
+                    vault_kv_path           = "secret/postgres",
+                    vault_kv_field_username = "username",
+                    vault_kv_field_password = "password"
                   }
 }
 ```
@@ -180,11 +180,11 @@ module "postgres" {
 ...
 
   vault_secret  = {
-                    use_vault_provider     = true,
-                    vault_kv_policy_name   = "kv-users-secret"
-                    vault_kv_path          = "secret/services/postgres/users",
-                    vault_kv_username_name = "guestuser",
-                    vault_kv_password_name = "guestpassword"
+                    use_vault_provider      = true,
+                    vault_kv_policy_name    = "kv-users-secret"
+                    vault_kv_path           = "secret/services/postgres/users",
+                    vault_kv_field_username = "guestuser",
+                    vault_kv_field_password = "guestpassword"
                   }
 }
 ```
@@ -192,7 +192,6 @@ module "postgres" {
 ## Volumes
 Module (optionally) supports [host volume](https://www.nomadproject.io/docs/job-specification/volume) to store postgres data.
 If the `use_host_volume` is set to `true` (default: false), Postgres data will be available in root `/persistence/postgres` folder inside the Vagrant box.
-
 
 ## Contributors
 [<img src="https://avatars0.githubusercontent.com/u/40291976?s=64&v=4">](https://github.com/fredrikhgrelland)
