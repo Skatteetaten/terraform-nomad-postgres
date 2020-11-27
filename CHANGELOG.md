@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.4.0 UNRELEASED]
+## [0.4.0]
 
 ### Added
 - Expand resources for side_car #56
