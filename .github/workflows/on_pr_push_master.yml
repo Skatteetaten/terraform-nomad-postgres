@@ -32,6 +32,17 @@ jobs:
           VALIDATE_TERRAFORM: true
           VALIDATE_XML: true
 
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Insepct docker image
+        run: |
+          cat ~/.docker/config.json
+          docker pull centos:8
+
   enforce-changelog:
     runs-on: ubuntu-latest
     if: github.event.action != 'closed' && github.event_name == 'pull_request'
