@@ -86,3 +86,4 @@ update-box:
 pre-commit: check_for_docker_binary check_for_terraform_binary
 	docker run -e RUN_LOCAL=true -v "${PWD}:/tmp/lint/" github/super-linter
 	terraform fmt -recursive && echo "\e[32mTrying to prettify all .tf files.\e[0m"
+
