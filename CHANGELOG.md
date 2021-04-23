@@ -4,6 +4,7 @@
 
 ### Changed
 - Renamed file 01-create_vault_policy_to_read_secrets.yml → 100-create_vault_policy_to_read_secrets.yml #68 
+- Consul tags support via input variable #72
 
 ## [0.4.0]
 

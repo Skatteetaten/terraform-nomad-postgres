@@ -33,6 +33,7 @@ job "${service_name}" {
     service {
       name = "${service_name}"
       port = "${port}"
+      tags = ["${consul_tags}"]
       check {
         type      = "script"
         task      = "postgresql"

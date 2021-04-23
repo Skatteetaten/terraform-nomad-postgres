@@ -103,6 +103,7 @@ module "postgres" {
 | nomad_datacenters | Nomad data centers | list(string) | ["dc1"] | no |
 | nomad_namespace | [Enterprise] Nomad namespace | string | "default" | no |
 | nomad_host_volume | Nomad host volume name | string | "persistence" | no |
+| consul_tags | Consul tags | list(string) | [""] | no |
 | service_name | Postgres service name | string | "postgres" | no |
 | container_port | Postgres port | number | 5432 | no |
 | container_image | Postgres docker image | string | "postgres:12-alpine" | no |

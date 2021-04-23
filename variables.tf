@@ -15,6 +15,13 @@ variable "nomad_host_volume" {
   default     = "persistence"
 }
 
+# Consul
+variable "consul_tags" {
+    type = list(string)
+    default = [""]
+    description = "List of one or more tags to announce in Consul, for service discovery purposes"
+}
+
 # Postgres
 variable "service_name" {
   type        = string

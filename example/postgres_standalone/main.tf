@@ -6,6 +6,9 @@ module "postgres" {
   nomad_namespace   = "default"
   nomad_host_volume = "persistence"
 
+  # consul
+  consul_tags                     = ["vagrant"]
+
   # postgres
   service_name                    = "postgres"
   container_image                 = "postgres:12-alpine"
