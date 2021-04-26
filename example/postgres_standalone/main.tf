@@ -7,7 +7,7 @@ module "postgres" {
   nomad_host_volume = "persistence"
 
   # consul
-  consul_tags                     = ["vagrant"]
+  consul_tags                     = ["postgres"]
 
   # postgres
   service_name                    = "postgres"
