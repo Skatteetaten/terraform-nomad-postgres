@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.4.1 UNRELEASED]
+## [0.4.1]
 
 ### Changed
 - Renamed file 01-create_vault_policy_to_read_secrets.yml → 100-create_vault_policy_to_read_secrets.yml #68 
