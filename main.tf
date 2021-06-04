@@ -21,6 +21,7 @@ data "template_file" "template_nomad_job_postgres" {
     username                = var.admin_user
     password                = var.admin_password
     use_vault_provider      = var.vault_secret.use_vault_provider
+    use_custom_vault_policy = var.vault_secret.use_custom_vault_policy
     vault_kv_policy_name    = var.vault_secret.vault_kv_policy_name
     vault_kv_path           = var.vault_secret.vault_kv_path
     vault_kv_field_username = var.vault_secret.vault_kv_field_username

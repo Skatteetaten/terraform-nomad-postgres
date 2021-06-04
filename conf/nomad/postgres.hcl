@@ -62,7 +62,7 @@ job "${service_name}" {
 
     task "postgresql" {
       driver = "docker"
-    %{ if use_vault_provider }
+    %{ if use_vault_provider && use_custom_vault_policy }
       vault {
         policies = "${vault_kv_policy_name}"
       }

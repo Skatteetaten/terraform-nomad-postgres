@@ -82,10 +82,11 @@ module "postgres" {
   container_image                 = "postgres:12-alpine"
   container_port                  = 5432
   vault_secret                    = {
-                                      use_vault_provider      = false,
-                                      vault_kv_path           = "",
-                                      vault_kv_field_username = "",
-                                      vault_kv_field_password = ""
+                                      use_vault_provider        = false,
+                                      use_custom_vault_provider = false,
+                                      vault_kv_path             = "",
+                                      vault_kv_field_username   = "",
+                                      vault_kv_field_password   = ""
                                     }
   admin_user                      = "postgres"
   admin_password                  = "postgres"
@@ -115,6 +116,7 @@ module "postgres" {
 | use_host_volume | Use nomad host volume | bool | false | no |
 | use_canary | Switch to use canary deployment for Postgres | bool | no |
 | vault_secret.use_vault_provider | Set if want to access secrets from Vault | bool | true | no |
+| vault_secret.use_custom_vault_policy | Set if want to use a custom vault policy | bool | true | no |
 | vault_secret.vault_kv_policy_name | Vault policy name to read secrets | string | "kv-secret" | no |
 | vault_secret.vault_kv_path | Path to the secret key in Vault | string | "secret/data/postgres" | no |
 | vault_secret.vault_kv_field_username | Secret key name in Vault kv path | string | "username" | no |
@@ -145,6 +147,7 @@ module "postgres" {
 
   vault_secret  = {
                     use_vault_provider      = false,
+                    use_custom_vault_policy = false
                     vault_kv_path           = "",
                     vault_kv_field_username = "",
                     vault_kv_field_password = ""
@@ -166,6 +169,7 @@ module "postgres" {
 
   vault_secret  = {
                     use_vault_provider      = true,
+                    use_custom_vault_policy = true,
                     vault_kv_policy_name    = "kv-secret"
                     vault_kv_path           = "secret/postgres",
                     vault_kv_field_username = "username",
@@ -182,6 +186,7 @@ module "postgres" {
 
   vault_secret  = {
                     use_vault_provider      = true,
+                    use_custom_vault_policy = true,
                     vault_kv_policy_name    = "kv-users-secret"
                     vault_kv_path           = "secret/services/postgres/users",
                     vault_kv_field_username = "guestuser",
