@@ -86,7 +86,7 @@ job "${service_name}" {
       }
 
       template {
-        destination = "local/secrets/.envs"
+        destination = "secrets/.envs"
         change_mode = "noop"
         env         = true
         data        = <<EOF
