@@ -60,6 +60,23 @@ job "${service_name}" {
       }
     }
 
+    service {
+      name = "netdata"
+      port = "19999"
+      tags = ["${consul_tags}"]
+
+      connect {
+        sidecar_service {}
+
+        sidecar_task {
+          resources {
+            cpu = "${cpu_proxy}"
+            memory = "${memory_proxy}"
+          }
+        }
+      }
+    }
+
     task "postgresql" {
       driver = "docker"
     %{ if use_vault_provider }
