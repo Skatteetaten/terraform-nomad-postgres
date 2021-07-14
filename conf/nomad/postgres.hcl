@@ -61,7 +61,7 @@ job "${service_name}" {
     }
 
     service {
-      name = "netdata"
+      name = "${service_name}-netdata"
       port = "19999"
       tags = ["${consul_tags}"]
 
