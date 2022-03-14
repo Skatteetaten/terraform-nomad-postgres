@@ -20,6 +20,7 @@ job "${service_name}" {
   group "database" {
     network {
       mode = "bridge"
+      port "psql" { static = ${port} }
     }
 
   %{ if use_host_volume }
@@ -32,7 +33,7 @@ job "${service_name}" {
 
     service {
       name = "${service_name}"
-      port = "${port}"
+      port = "psql"
       tags = ["${consul_tags}"]
       check {
         type      = "script"
