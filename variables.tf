@@ -17,9 +17,9 @@ variable "nomad_host_volume" {
 
 # Consul
 variable "consul_tags" {
-    type = list(string)
-    default = [""]
-    description = "List of one or more tags to announce in Consul, for service discovery purposes"
+  type        = list(string)
+  default     = [""]
+  description = "List of one or more tags to announce in Consul, for service discovery purposes"
 }
 
 # Postgres
@@ -49,13 +49,13 @@ variable "admin_user" {
 
 variable "resource_proxy" {
   type = object({
-    cpu     = number,
-    memory  = number
+    cpu    = number,
+    memory = number
   })
   description = "Postgres proxy resources"
   default = {
-    cpu         = 200
-    memory      = 128
+    cpu    = 200
+    memory = 128
   }
   validation {
     condition     = var.resource_proxy.cpu >= 200 && var.resource_proxy.memory >= 128
@@ -97,6 +97,12 @@ variable "use_host_volume" {
 variable "use_canary" {
   type        = bool
   description = "Switch to use canary deployment for Postgres"
+  default     = true
+}
+
+variable "use_connect" {
+  type        = bool
+  description = "Use Consul Connect"
   default     = true
 }
 

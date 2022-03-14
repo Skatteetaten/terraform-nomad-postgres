@@ -47,6 +47,7 @@ job "${service_name}" {
         timeout   = "2s"
       }
 
+      %{ if use_connect }
       connect {
         sidecar_service {
         }
@@ -58,6 +59,7 @@ job "${service_name}" {
           }
         }
       }
+      %{ endif }
     }
 
     task "postgresql" {

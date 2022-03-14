@@ -47,7 +47,7 @@ You can verify that Postgres is running by checking the connection. The followin
 make proxy
 ```
 
-Further, you can verify the connection by connecting with the psql CLI ([required software](#required-software)) using the command bellow.
+Further, you can verify the connection by connecting with the psql CLI ([required software](#required-software)) using the command below.
 You can find the `username` and `password` in the [Vault UI (localhost:8200)](http://localhost:8200/).
 ```sh
 psql "dbname=metastore host=127.0.0.1 user=<username> password=<password> port=5432 sslmode=disable"
@@ -84,6 +84,7 @@ module "postgres" {
   vault_secret                    = {
                                       use_vault_provider      = false,
                                       vault_kv_path           = "",
+                                      vault_kv_policy_name    = "",
                                       vault_kv_field_username = "",
                                       vault_kv_field_password = ""
                                     }
@@ -113,7 +114,8 @@ module "postgres" {
 | container_environment_variables | Postgres container environement variables | list(string) | ["PGDATA=/var/lib/postgresql/data"] | no |
 | volume_destination | Postgres volume destination | string | "/var/lib/postgresql/data" | no |
 | use_host_volume | Use nomad host volume | bool | false | no |
-| use_canary | Switch to use canary deployment for Postgres | bool | no |
+| use_canary | Switch to use canary deployment for Postgres | bool | true | no |
+| use_connect | Use Consul Connect | bool | true | no |
 | vault_secret.use_vault_provider | Set if want to access secrets from Vault | bool | true | no |
 | vault_secret.vault_kv_policy_name | Vault policy name to read secrets | string | "kv-secret" | no |
 | vault_secret.vault_kv_path | Path to the secret key in Vault | string | "secret/data/postgres" | no |
@@ -157,7 +159,7 @@ module "postgres" {
 ### Set credentials using Vault secrets
 By default `use_vault_provider` is set to `false`. 
 However, when testing using the box (e.g. `make dev`) the postgres username and password is randomly generated and put in `secret/postgres` inside Vault, from the [01_generate_secrets_vault.yml](dev/ansible/01_generate_secrets_vault.yml) playbook. 
-This is an independet process and will run regardless of the `vault_secret.use_vault_provider` is `false/true`. 
+This is an independent process and will run regardless of the `vault_secret.use_vault_provider` is `false/true`.
 
 If you want to use the automatically generated credentials in the box, you can do so by changing the `vault_secret` object as seen below:
 ```hcl-terraform

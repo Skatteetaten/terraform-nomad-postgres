@@ -7,9 +7,8 @@ locals {
   )
 }
 
-data "template_file" "template_nomad_job_postgres" {
-  template = file("${path.module}/conf/nomad/postgres.hcl")
-  vars = {
+resource "nomad_job" "nomad_job_postgres" {
+  jobspec = templatefile("${path.module}/conf/nomad/postgres.hcl", {
     service_name            = var.service_name
     cpu_proxy               = var.resource_proxy.cpu
     memory_proxy            = var.resource_proxy.memory
@@ -30,13 +29,10 @@ data "template_file" "template_nomad_job_postgres" {
     volume_destination      = var.volume_destination
     use_host_volume         = var.use_host_volume
     use_canary              = var.use_canary
+    use_connect             = var.use_connect
     memory                  = var.memory
     cpu                     = var.cpu
     envs                    = local.postgres_env_vars
-  }
-}
-
-resource "nomad_job" "nomad_job_postgres" {
-  jobspec = data.template_file.template_nomad_job_postgres.rendered
-  detach  = false
+  })
+  detach = false
 }
