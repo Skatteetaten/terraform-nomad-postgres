@@ -14,7 +14,7 @@ resource "nomad_job" "nomad_job_postgres" {
     memory_proxy            = var.resource_proxy.memory
     datacenters             = local.datacenters
     namespace               = var.nomad_namespace
-    consul_tags             = join(",", var.consul_tags)
+    consul_tags             = jsonencode(var.consul_tags)
     image                   = var.container_image
     port                    = var.container_port
     username                = var.admin_user

@@ -34,7 +34,7 @@ job "${service_name}" {
     service {
       name = "${service_name}"
       port = "psql"
-      tags = ["${consul_tags}"]
+      tags = ${consul_tags}
       check {
         type      = "script"
         task      = "postgresql"
