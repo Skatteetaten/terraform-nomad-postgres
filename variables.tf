@@ -18,7 +18,7 @@ variable "nomad_host_volume" {
 # Consul
 variable "consul_tags" {
   type        = list(string)
-  default     = [""]
+  default     = []
   description = "List of one or more tags to announce in Consul, for service discovery purposes"
 }
 
