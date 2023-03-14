@@ -1,5 +1,4 @@
 locals {
-  datacenters = join(",", var.nomad_datacenters)
   postgres_env_vars = join("\n",
     concat([
       "POSTGRES_DB=${var.database}"
@@ -12,7 +11,7 @@ resource "nomad_job" "nomad_job_postgres" {
     service_name            = var.service_name
     cpu_proxy               = var.resource_proxy.cpu
     memory_proxy            = var.resource_proxy.memory
-    datacenters             = local.datacenters
+    datacenters             = jsonencode(var.nomad_datacenters)
     namespace               = var.nomad_namespace
     consul_tags             = jsonencode(var.consul_tags)
     image                   = var.container_image

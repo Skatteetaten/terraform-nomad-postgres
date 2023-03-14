@@ -2,7 +2,7 @@
 variable "nomad_datacenters" {
   type        = list(string)
   description = "Nomad data centers"
-  default     = ["dc1"]
+  default     = ["*"]
 }
 variable "nomad_namespace" {
   type        = string

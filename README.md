@@ -101,7 +101,7 @@ module "postgres" {
 ## Inputs
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| nomad_datacenters | Nomad data centers | list(string) | ["dc1"] | no |
+| nomad_datacenters | Nomad data centers | list(string) | ["*"] | no |
 | nomad_namespace | [Enterprise] Nomad namespace | string | "default" | no |
 | nomad_host_volume | Nomad host volume name | string | "persistence" | no |
 | consul_tags | List of one or more tags to announce in Consul, for service discovery purposes | list(string) | [""] | no |

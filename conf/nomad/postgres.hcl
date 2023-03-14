@@ -1,6 +1,6 @@
 job "${service_name}" {
   type        = "service"
-  datacenters = "${datacenters}"
+  datacenters = ${datacenters}
   namespace   = "${namespace}"
 
   update {
