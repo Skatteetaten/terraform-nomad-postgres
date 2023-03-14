@@ -4,13 +4,13 @@ output "service_name" {
 }
 
 output "username" {
-  description = "Postgres username"
+  description = "Postgres username (if not using Vault)"
   value       = var.admin_user
   sensitive   = true
 }
 
 output "password" {
-  description = "Postgres password"
+  description = "Postgres password (if not using Vault)"
   value       = var.admin_password
   sensitive   = true
 }

@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.5.0]
+
+### Changed
+- Updated to work with Terraform >1.0
+- Fixed `consul_tags` rendering of multiple tags
+- Fixed `nomad_datacenters` rendering of multiple datacenters
+- `nomad_datacenters` now defaults to the Nomad default of `["*"]`
+- Port assignments are now done via the `network` stanza instead of `service` stanza
+- Less extraneous whitespace in the generated Nomad job file
+
+### Added
+- Added `container_entrypoints`, `container_command`, and `container_command_args` to customize container launch
+- Added `use_static_port` to make the `container_port` be a static port
+- Added `use_connect` to make Consul Connect optional, default to `true` for backwards compatibility
+
 ## [0.4.2]
 
 ## Changed
