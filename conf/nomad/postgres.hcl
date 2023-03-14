@@ -43,11 +43,11 @@ job "${service_name}" {
         type      = "script"
         task      = "postgresql"
         command   = "/usr/local/bin/pg_isready"
-      %{ if use_vault_provider }
+      %{~ if use_vault_provider ~}
         args      = ["-U", "$POSTGRES_USER"]
-      %{ else }
+      %{~ else ~}
         args      = ["-U", "${username}"]
-      %{ endif }
+      %{~ endif ~}
         interval  = "30s"
         timeout   = "2s"
       }
@@ -69,25 +69,31 @@ job "${service_name}" {
 
     task "postgresql" {
       driver = "docker"
-    %{ if use_vault_provider }
+    %{~ if use_vault_provider ~}
       vault {
         policies = "${vault_kv_policy_name}"
       }
-    %{ endif }
+    %{~ endif ~}
 
-    %{ if use_host_volume }
+    %{~ if use_host_volume ~}
       volume_mount {
         volume      = "persistence"
         destination = "${volume_destination}"
         read_only   = false
       }
-    %{ endif }
+    %{~ endif ~}
 
       config {
         image      = "${image}"
-        %{ if entrypoints != "[]" }entrypoint = ${entrypoints}%{ endif }
-        %{ if command != "" }command    = "${command}"%{ endif }
-        %{ if command_args != "[]" }args       = ${command_args}%{ endif }
+      %{~ if entrypoints != "[]" ~}
+        entrypoint = ${entrypoints}
+      %{~ endif ~}
+      %{~ if command != "" ~}
+        command    = "${command}"
+      %{~ endif ~}
+      %{~ if command_args != "[]" ~}
+        args       = ${command_args}
+      %{~ endif ~}
       }
 
       logs {
@@ -105,10 +111,10 @@ job "${service_name}" {
 POSTGRES_USER="{{ .Data.data.${vault_kv_field_username} }}"
 POSTGRES_PASSWORD="{{ .Data.data.${vault_kv_field_password} }}"
 {{ end }}
-%{ else }
+%{ else ~}
 POSTGRES_USER="${username}"
 POSTGRES_PASSWORD="${password}"
-%{ endif }
+%{ endif ~}
 ${envs}
 EOF
       }
