@@ -115,6 +115,7 @@ module "postgres" {
 | admin_user | Postgres admin username | string | "postgres" | no |
 | admin_password | Postgres admin password | string | "postgres" | no |
 | database | Postgres database name | string | "metastore" | no |
+| pg_isready_path | Path to `pg_isready` script for health checks" | string | "/usr/local/bin/pg_isready" | no |
 | container_environment_variables | Postgres container environement variables | list(string) | ["PGDATA=/var/lib/postgresql/data"] | no |
 | volume_destination | Postgres volume destination | string | "/var/lib/postgresql/data" | no |
 | use_host_volume | Use nomad host volume | bool | false | no |

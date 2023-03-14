@@ -159,3 +159,9 @@ variable "cpu" {
   description = "CPU allocation for Postgres"
   default     = 350
 }
+
+variable "pg_isready_path" {
+  type = string
+  description = "Path to pg_isready script for health checks"
+  default = "/usr/local/bin/pg_isready"
+}

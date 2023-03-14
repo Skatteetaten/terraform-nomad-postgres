@@ -36,6 +36,7 @@ resource "nomad_job" "nomad_job_postgres" {
     memory                  = var.memory
     cpu                     = var.cpu
     envs                    = local.postgres_env_vars
+    pg_isready_path         = var.pg_isready_path
   })
   detach = false
 }

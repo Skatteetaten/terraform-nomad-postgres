@@ -14,6 +14,7 @@
 - Added `container_entrypoints`, `container_command`, and `container_command_args` to customize container launch
 - Added `use_static_port` to make the `container_port` be a static port
 - Added `use_connect` to make Consul Connect optional, default to `true` for backwards compatibility
+- Added `pg_isready_path` to customize the path to `pg_isready` health check script
 
 ## [0.4.2]
 

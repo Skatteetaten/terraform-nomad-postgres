@@ -42,7 +42,7 @@ job "${service_name}" {
       check {
         type      = "script"
         task      = "postgresql"
-        command   = "/usr/local/bin/pg_isready"
+        command   = "${pg_isready_path}"
       %{~ if use_vault_provider ~}
         args      = ["-U", "$POSTGRES_USER"]
       %{~ else ~}
