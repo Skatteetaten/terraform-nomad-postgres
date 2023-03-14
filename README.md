@@ -106,8 +106,11 @@ module "postgres" {
 | nomad_host_volume | Nomad host volume name | string | "persistence" | no |
 | consul_tags | List of one or more tags to announce in Consul, for service discovery purposes | list(string) | [""] | no |
 | service_name | Postgres service name | string | "postgres" | no |
-| container_port | Postgres port | number | 5432 | no |
 | container_image | Postgres docker image | string | "postgres:12-alpine" | no |
+| container_entrypoints | Docker driver entrypoint array | list(string) | no |
+| container_command | Docker driver command string | string | no |
+| container_command_args | Docker driver command args array | list(string) | no |
+| container_port | Postgres port | number | 5432 | no |
 | admin_user | Postgres admin username | string | "postgres" | no |
 | admin_password | Postgres admin password | string | "postgres" | no |
 | database | Postgres database name | string | "metastore" | no |

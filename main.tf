@@ -16,6 +16,9 @@ resource "nomad_job" "nomad_job_postgres" {
     namespace               = var.nomad_namespace
     consul_tags             = jsonencode(var.consul_tags)
     image                   = var.container_image
+    entrypoints             = jsonencode(var.container_entrypoints)
+    command                 = var.container_command
+    command_args            = jsonencode(var.container_command_args)
     port                    = var.container_port
     username                = var.admin_user
     password                = var.admin_password

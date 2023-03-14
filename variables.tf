@@ -35,6 +35,24 @@ variable "container_image" {
   default     = "postgres:12-alpine"
 }
 
+variable "container_entrypoints" {
+  type        = list(string)
+  description = "Docker driver entrypoint array"
+  default     = []
+}
+
+variable "container_command" {
+  type        = string
+  description = "Docker driver command string"
+  default     = ""
+}
+
+variable "container_command_args" {
+  type        = list(string)
+  description = "Docker driver command args array"
+  default     = []
+}
+
 variable "container_port" {
   type        = number
   description = "Postgres port"

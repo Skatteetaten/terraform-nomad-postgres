@@ -80,7 +80,10 @@ job "${service_name}" {
     %{ endif }
 
       config {
-        image = "${image}"
+        image      = "${image}"
+        %{ if entrypoints != "[]" }entrypoint = ${entrypoints}%{ endif }
+        %{ if command != "" }command    = "${command}"%{ endif }
+        %{ if command_args != "[]" }args       = ${command_args}%{ endif }
       }
 
       logs {
