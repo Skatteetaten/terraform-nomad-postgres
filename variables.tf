@@ -59,6 +59,12 @@ variable "container_port" {
   default     = 5432
 }
 
+variable "use_static_port" {
+  type        = bool
+  description = "Switch to make container_port static"
+  default     = false
+}
+
 variable "admin_user" {
   type        = string
   description = "Postgres admin user"

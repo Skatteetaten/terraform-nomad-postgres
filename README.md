@@ -111,6 +111,7 @@ module "postgres" {
 | container_command | Docker driver command string | string | no |
 | container_command_args | Docker driver command args array | list(string) | no |
 | container_port | Postgres port | number | 5432 | no |
+| use_static_port | Switch to make container_port static | bool | false | no |
 | admin_user | Postgres admin username | string | "postgres" | no |
 | admin_password | Postgres admin password | string | "postgres" | no |
 | database | Postgres database name | string | "metastore" | no |

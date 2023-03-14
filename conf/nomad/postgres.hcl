@@ -20,7 +20,11 @@ job "${service_name}" {
   group "database" {
     network {
       mode = "bridge"
+      %{~ if use_static_port ~}
       port "psql" { static = ${port} }
+      %{~ else ~}
+      port "psql" { to = ${port} }
+      %{~ endif ~}
     }
 
   %{ if use_host_volume }

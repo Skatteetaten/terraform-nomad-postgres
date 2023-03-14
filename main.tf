@@ -19,6 +19,7 @@ resource "nomad_job" "nomad_job_postgres" {
     command                 = var.container_command
     command_args            = jsonencode(var.container_command_args)
     port                    = var.container_port
+    use_static_port         = var.use_static_port
     username                = var.admin_user
     password                = var.admin_password
     use_vault_provider      = var.vault_secret.use_vault_provider
