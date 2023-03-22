@@ -4,15 +4,41 @@ variable "nomad_datacenters" {
   description = "Nomad data centers"
   default     = ["*"]
 }
+
 variable "nomad_namespace" {
   type        = string
   description = "[Enterprise] Nomad namespace"
   default     = "default"
 }
+
 variable "nomad_host_volume" {
   type        = string
   description = "Nomad Host Volume"
   default     = "persistence"
+}
+
+variable "nomad_job_extra" {
+  type = string
+  description = "Extra config to inject in Nomad's job config stanza"
+  default = ""
+}
+
+variable "nomad_group_extra" {
+  type = string
+  description = "Extra config to inject in Nomad's group config stanza"
+  default = ""
+}
+
+variable "nomad_task_extra" {
+  type = string
+  description = "Extra config to inject in Nomad's task config stanza"
+  default = ""
+}
+
+variable "nomad_docker_config_extra" {
+  type = string
+  description = "Extra config to inject in Nomad's docker/config stanza"
+  default = ""
 }
 
 # Consul

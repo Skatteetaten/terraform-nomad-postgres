@@ -104,6 +104,10 @@ module "postgres" {
 | nomad_datacenters | Nomad data centers | list(string) | ["*"] | no |
 | nomad_namespace | [Enterprise] Nomad namespace | string | "default" | no |
 | nomad_host_volume | Nomad host volume name | string | "persistence" | no |
+| nomad_job_extra | Extra config to inject in Nomad's job config stanza | string | "" | no |
+| nomad_group_extra | Extra config to inject in Nomad's group config stanza | string | "" | no |
+| nomad_task_extra | Extra config to inject in Nomad's task config stanza | string | "" | no |
+| nomad_docker_config_extra | Extra config to inject in Nomad's docker config stanza | string | "" | no |
 | consul_tags | List of one or more tags to announce in Consul, for service discovery purposes | list(string) | [""] | no |
 | service_name | Postgres service name | string | "postgres" | no |
 | container_image | Postgres docker image | string | "postgres:12-alpine" | no |

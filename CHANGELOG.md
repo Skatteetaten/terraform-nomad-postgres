@@ -12,6 +12,7 @@
 
 ### Added
 - Added `container_entrypoints`, `container_command`, and `container_command_args` to customize container launch
+- Added `nomad_job_extra`, `nomad_group_extra`, and `nomad_task_extra`, and `nomad_docker_config_extra` to customize job template
 - Added `use_static_port` to make the `container_port` be a static port
 - Added `use_connect` to make Consul Connect optional, default to `true` for backwards compatibility
 - Added `pg_isready_path` to customize the path to `pg_isready` health check script

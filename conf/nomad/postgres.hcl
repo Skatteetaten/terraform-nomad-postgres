@@ -94,6 +94,9 @@ job "${service_name}" {
       %{~ if command_args != "[]" ~}
         args       = ${command_args}
       %{~ endif ~}
+      %{~ if docker_config_extra != "" ~}
+${docker_config_extra}
+      %{~ endif ~}
       }
 
       logs {
@@ -123,6 +126,12 @@ EOF
         memory = "${memory}"
         cpu    = "${cpu}"
       }
+    %{~ if task_extra != "" ~}
+${task_extra}
+    %{~ endif ~}
     }
+  %{~ if group_extra != "" ~}
+${group_extra}
+  %{~ endif ~}
   }
 }
