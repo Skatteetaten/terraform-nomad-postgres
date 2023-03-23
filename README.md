@@ -92,7 +92,7 @@ module "postgres" {
   admin_password                  = "postgres"
   database                        = "metastore"
   volume_destination              = "/var/lib/postgresql/data"
-  use_host_volume                 = true
+  nomad_host_volume               = "/local/postgres"
   use_canary                      = false
   container_environment_variables = ["PGDATA=/var/lib/postgresql/data/"]
 }
@@ -103,7 +103,9 @@ module "postgres" {
 |------|-------------|------|---------|:--------:|
 | nomad_datacenters | Nomad data centers | list(string) | ["*"] | no |
 | nomad_namespace | [Enterprise] Nomad namespace | string | "default" | no |
-| nomad_host_volume | Nomad host volume name | string | "persistence" | no |
+| nomad_host_volume | Nomad host volume name | string | "" | no |
+| nomad_csi_volume | Nomad CSI volume name to mount | string | "" | no |
+| nomad_csi_volume_extra | Extra config to inject in Nomad's CSI volume stanza | string | "" | no |
 | nomad_job_extra | Extra config to inject in Nomad's job config stanza | string | "" | no |
 | nomad_group_extra | Extra config to inject in Nomad's group config stanza | string | "" | no |
 | nomad_task_extra | Extra config to inject in Nomad's task config stanza | string | "" | no |

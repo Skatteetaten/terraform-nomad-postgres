@@ -33,8 +33,9 @@ resource "nomad_job" "nomad_job_postgres" {
     vault_kv_field_password = var.vault_secret.vault_kv_field_password
     database                = var.database
     nomad_host_volume       = var.nomad_host_volume
+    nomad_csi_volume        = var.nomad_csi_volume
+    nomad_csi_volume_extra  = var.nomad_csi_volume_extra
     volume_destination      = var.volume_destination
-    use_host_volume         = var.use_host_volume
     use_canary              = var.use_canary
     use_connect             = var.use_connect
     memory                  = var.memory

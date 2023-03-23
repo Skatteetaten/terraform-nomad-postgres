@@ -22,7 +22,7 @@ module "postgres" {
                                     }
   database                        = "metastore"
   volume_destination              = "/var/lib/postgresql/data"
-  use_host_volume                 = true
+  nomad_host_volume               = "/host/volume/postgres"
   use_canary                      = true
   container_environment_variables = ["PGDATA=/var/lib/postgresql/data/"]
 }

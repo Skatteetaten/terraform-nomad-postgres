@@ -14,7 +14,19 @@ variable "nomad_namespace" {
 variable "nomad_host_volume" {
   type        = string
   description = "Nomad Host Volume"
-  default     = "persistence"
+  default     = ""
+}
+
+variable "nomad_csi_volume" {
+  type        = string
+  description = "Nomad CSI Volume"
+  default     = ""
+}
+
+variable "nomad_csi_volume_extra" {
+  type        = string
+  description = "Nomad CSI Volume Extra Config"
+  default     = ""
 }
 
 variable "nomad_job_extra" {
@@ -136,12 +148,6 @@ variable "volume_destination" {
   type        = string
   description = "Postgres volume destination"
   default     = "/var/lib/postgresql/data"
-}
-
-variable "use_host_volume" {
-  type        = bool
-  description = "Switch for nomad jobs to use host volume feature"
-  default     = false
 }
 
 variable "use_canary" {

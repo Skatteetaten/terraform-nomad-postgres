@@ -27,13 +27,23 @@ job "${service_name}" {
       %{~ endif ~}
     }
 
-  %{ if use_host_volume }
+  %{~ if nomad_host_volume != "" ~}
     volume "persistence" {
       type      = "host"
       source    = "${nomad_host_volume}"
       read_only = false
     }
-  %{ endif }
+  %{~ endif }
+  %{~ if nomad_csi_volume != "" && nomad_host_volume == "" ~}
+    volume "persistence" {
+      type      = "csi"
+      source    = "${nomad_csi_volume}"
+      read_only = false
+    %{~ if nomad_csi_volume_extra != "" ~}
+${nomad_csi_volume_extra}
+    %{~ endif ~}
+    }
+  %{~ endif ~}
 
     service {
       name = "${service_name}"
@@ -75,13 +85,20 @@ job "${service_name}" {
       }
     %{~ endif ~}
 
-    %{~ if use_host_volume ~}
+    %{~ if nomad_host_volume != "" ~}
       volume_mount {
         volume      = "persistence"
         destination = "${volume_destination}"
         read_only   = false
       }
     %{~ endif ~}
+    %{~ if nomad_csi_volume != "" && nomad_host_volume == "" ~}
+      volume_mount {
+        volume      = "persistence"
+        destination = "${volume_destination}"
+        read_only   = false
+      }
+    %{ endif ~}
 
       config {
         image      = "${image}"

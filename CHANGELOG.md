@@ -2,6 +2,10 @@
 
 ## [0.5.0]
 
+### BREAKING
+ - The `use_host_volume` flag is removed and now triggered by setting `nomad_host_volume`.
+   Previously, `nomad_host_volume` defaulted to `"persistence"`, but now defaults to `""`.
+
 ### Changed
 - Updated to work with Terraform >1.0
 - Fixed `consul_tags` rendering of multiple tags
@@ -16,6 +20,7 @@
 - Added `use_static_port` to make the `container_port` be a static port
 - Added `use_connect` to make Consul Connect optional, default to `true` for backwards compatibility
 - Added `pg_isready_path` to customize the path to `pg_isready` health check script
+- Added `nomad_csi_volume` and `nomad_csi_volume_extra` to support mounting CSI volumes (such as NFS!)
 
 ## [0.4.2]
 
