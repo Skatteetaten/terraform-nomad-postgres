@@ -30,27 +30,27 @@ variable "nomad_csi_volume_extra" {
 }
 
 variable "nomad_job_extra" {
-  type = string
+  type        = string
   description = "Extra config to inject in Nomad's job config stanza"
-  default = ""
+  default     = ""
 }
 
 variable "nomad_group_extra" {
-  type = string
+  type        = string
   description = "Extra config to inject in Nomad's group config stanza"
-  default = ""
+  default     = ""
 }
 
 variable "nomad_task_extra" {
-  type = string
+  type        = string
   description = "Extra config to inject in Nomad's task config stanza"
-  default = ""
+  default     = ""
 }
 
 variable "nomad_docker_config_extra" {
-  type = string
+  type        = string
   description = "Extra config to inject in Nomad's docker/config stanza"
-  default = ""
+  default     = ""
 }
 
 # Consul
@@ -193,7 +193,7 @@ variable "cpu" {
 }
 
 variable "pg_isready_path" {
-  type = string
+  type        = string
   description = "Path to pg_isready script for health checks"
-  default = "/usr/local/bin/pg_isready"
+  default     = "/usr/local/bin/pg_isready"
 }
