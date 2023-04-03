@@ -53,11 +53,6 @@ ${nomad_csi_volume_extra}
         type      = "script"
         task      = "postgresql"
         command   = "${pg_isready_path}"
-      %{~ if use_vault_provider ~}
-        args      = ["-U", "$POSTGRES_USER"]
-      %{~ else ~}
-        args      = ["-U", "${username}"]
-      %{~ endif ~}
         interval  = "30s"
         timeout   = "2s"
       }
