@@ -172,7 +172,7 @@ variable "vault_secret" {
   })
   description = "Set of properties to be able to fetch secret from vault"
   default = {
-    use_vault_provider      = true
+    use_vault_provider      = false
     vault_kv_policy_name    = "kv-secret"
     vault_kv_path           = "secret/data/postgres"
     vault_kv_field_username = "username"

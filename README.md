@@ -127,7 +127,7 @@ module "postgres" {
 | use_host_volume | Use nomad host volume | bool | false | no |
 | use_canary | Switch to use canary deployment for Postgres | bool | true | no |
 | use_connect | Use Consul Connect | bool | true | no |
-| vault_secret.use_vault_provider | Set if want to access secrets from Vault | bool | true | no |
+| vault_secret.use_vault_provider | Set if want to access secrets from Vault | bool | false | no |
 | vault_secret.vault_kv_policy_name | Vault policy name to read secrets | string | "kv-secret" | no |
 | vault_secret.vault_kv_path | Path to the secret key in Vault | string | "secret/data/postgres" | no |
 | vault_secret.vault_kv_field_username | Secret key name in Vault kv path | string | "username" | no |
