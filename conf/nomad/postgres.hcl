@@ -46,9 +46,11 @@ ${nomad_csi_volume_extra}
   %{~ endif ~}
 
     service {
+      provider = "${service_provider}"
       name = "${service_name}"
       port = "psql"
       tags = ${consul_tags}
+      %{~ if service_provider == "consul" ~}
       check {
         type      = "script"
         task      = "postgresql"
@@ -56,7 +58,7 @@ ${nomad_csi_volume_extra}
         interval  = "30s"
         timeout   = "2s"
       }
-
+      %{~ endif ~}
       %{ if use_connect }
       connect {
         sidecar_service {

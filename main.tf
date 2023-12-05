@@ -9,6 +9,7 @@ locals {
 resource "nomad_job" "nomad_job_postgres" {
   jobspec = templatefile("${path.module}/conf/nomad/postgres.hcl", {
     service_name            = var.service_name
+    service_provider        = var.service_provider 
     cpu_proxy               = var.resource_proxy.cpu
     memory_proxy            = var.resource_proxy.memory
     datacenters             = jsonencode(var.nomad_datacenters)

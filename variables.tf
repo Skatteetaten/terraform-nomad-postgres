@@ -61,6 +61,12 @@ variable "consul_tags" {
 }
 
 # Postgres
+variable "service_provider" {
+  type        = string
+  description = "Service Provider for service stanza"
+  default     = "consul"
+}
+
 variable "service_name" {
   type        = string
   description = "Postgres service name"
