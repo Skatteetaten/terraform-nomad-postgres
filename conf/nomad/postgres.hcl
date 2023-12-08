@@ -19,12 +19,19 @@ job "${service_name}" {
 
   group "database" {
     network {
-      mode = "bridge"
-      %{~ if use_static_port ~}
-      port "psql" { static = ${port} }
-      %{~ else ~}
-      port "psql" { to = ${port} }
+      %{~ if nomad_network_mode != "" ~}
+      mode = "${nomad_network_mode}"
       %{~ endif ~}
+      port "psql" {
+      %{~ if nomad_host_network != "" ~}
+        host_network = "${nomad_host_network}"
+      %{~ endif ~}
+      %{~ if use_static_port ~}
+        static = ${port}
+      %{~ else ~}
+        to = ${port}
+      %{~ endif ~}
+      }
     }
 
   %{~ if nomad_host_volume != "" ~}
@@ -107,6 +114,9 @@ ${nomad_csi_volume_extra}
       %{~ endif ~}
       %{~ if command_args != "[]" ~}
         args       = ${command_args}
+      %{~ endif ~}
+      %{~ if nomad_docker_network_mode != "" ~}
+        network_mode = "${nomad_docker_network_mode}"
       %{~ endif ~}
       %{~ if docker_config_extra != "" ~}
 ${docker_config_extra}

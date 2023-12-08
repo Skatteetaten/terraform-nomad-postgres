@@ -110,6 +110,9 @@ module "postgres" {
 | nomad_group_extra | Extra config to inject in Nomad's group config stanza | string | "" | no |
 | nomad_task_extra | Extra config to inject in Nomad's task config stanza | string | "" | no |
 | nomad_docker_config_extra | Extra config to inject in Nomad's docker config stanza | string | "" | no |
+| nomad_host_network | Nomad `network.port["psql"].host_network` | string | "" | no |
+| nomad_network_mode | Nomad `network.network_mode` | string | "" | no |
+| nomad_docker_network_mode | Postgres task Docker `config.network_mode` | string | "" | no |
 | consul_tags | List of one or more tags to announce in Consul, for service discovery purposes | list(string) | [""] | no |
 | service_name | Postgres service name | string | "postgres" | no |
 | container_image | Postgres docker image | string | "postgres:12-alpine" | no |
@@ -135,7 +138,8 @@ module "postgres" {
 | memory | Memory allocation for Postgres in MB | number | 428 | no |
 | cpu | CPU allocation for Postgres in MHz | number | 350 | no |
 | resource_proxy | Resource allocations for proxy | obj(number, number) |	{ <br> cpu = 200, <br> memory = 128 <br> } |	no |
- 	
+
+
 ## Outputs
 | Name | Description | Type |
 |------|-------------|------|

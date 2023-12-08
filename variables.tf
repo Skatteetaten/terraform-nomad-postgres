@@ -17,6 +17,24 @@ variable "nomad_host_volume" {
   default     = ""
 }
 
+variable "nomad_host_network" {
+  type        = string
+  description = "Nomad Host Network"
+  default     = ""
+}
+
+variable "nomad_network_mode" {
+  type        = string
+  description = "Nomad Network Mode"
+  default     = ""
+}
+
+variable "nomad_docker_network_mode" {
+  type        = string
+  description = "Nomad Docker Network Mode"
+  default     = ""
+}
+
 variable "nomad_csi_volume" {
   type        = string
   description = "Nomad CSI Volume"
@@ -53,7 +71,6 @@ variable "nomad_docker_config_extra" {
   default     = ""
 }
 
-# Consul
 variable "consul_tags" {
   type        = list(string)
   default     = []
