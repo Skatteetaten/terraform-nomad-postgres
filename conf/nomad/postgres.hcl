@@ -56,7 +56,7 @@ ${nomad_csi_volume_extra}
       provider = "${service_provider}"
       name = "${service_name}"
       port = "psql"
-      tags = ${consul_tags}
+      tags = ${service_tags}
       %{~ if service_provider == "consul" ~}
       check {
         type      = "script"

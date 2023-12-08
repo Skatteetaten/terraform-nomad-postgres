@@ -71,10 +71,10 @@ variable "nomad_docker_config_extra" {
   default     = ""
 }
 
-variable "consul_tags" {
+variable "service_tags" {
   type        = list(string)
   default     = []
-  description = "List of one or more tags to announce in Consul, for service discovery purposes"
+  description = "List of one or more tags to announce in Consul / Nomad SD, for service discovery purposes"
 }
 
 # Postgres
