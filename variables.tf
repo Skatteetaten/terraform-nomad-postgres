@@ -71,6 +71,12 @@ variable "nomad_docker_config_extra" {
   default     = ""
 }
 
+variable "update_health_check" {
+  type        = string
+  description = "Value for update.health_check"
+  default     = "checks"
+}
+
 variable "service_tags" {
   type        = list(string)
   default     = []

@@ -15,6 +15,7 @@ resource "nomad_job" "nomad_job_postgres" {
     datacenters             = jsonencode(var.nomad_datacenters)
     namespace               = var.nomad_namespace
     service_tags            = jsonencode(var.service_tags)
+    update_health_check     = var.update_health_check
     image                   = var.container_image
     entrypoints             = jsonencode(var.container_entrypoints)
     command                 = var.container_command

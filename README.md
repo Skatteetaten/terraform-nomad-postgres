@@ -113,6 +113,7 @@ module "postgres" {
 | nomad_host_network | Nomad `network.port["psql"].host_network` | string | "" | no |
 | nomad_network_mode | Nomad `network.network_mode` | string | "" | no |
 | nomad_docker_network_mode | Postgres task Docker `config.network_mode` | string | "" | no |
+| update_health_check | Nomad `update.health_check` | string | "checks" | no |
 | service_tags | List of one or more tags to announce in Consul / Nomad, for service discovery purposes | list(string) | [""] | no |
 | service_name | Postgres service name | string | "postgres" | no |
 | container_image | Postgres docker image | string | "postgres:12-alpine" | no |
