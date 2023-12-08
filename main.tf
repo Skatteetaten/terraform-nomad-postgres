@@ -1,5 +1,4 @@
 locals {
-  datacenters = join(",", var.nomad_datacenters)
   postgres_env_vars = join("\n",
     concat([
       "POSTGRES_DB=${var.database}"
@@ -7,17 +6,26 @@ locals {
   )
 }
 
-data "template_file" "template_nomad_job_postgres" {
-  template = file("${path.module}/conf/nomad/postgres.hcl")
-  vars = {
+resource "nomad_job" "nomad_job_postgres" {
+  jobspec = templatefile("${path.module}/conf/nomad/postgres.hcl", {
     service_name            = var.service_name
+    service_provider        = var.service_provider 
     cpu_proxy               = var.resource_proxy.cpu
     memory_proxy            = var.resource_proxy.memory
-    datacenters             = local.datacenters
+    datacenters             = jsonencode(var.nomad_datacenters)
     namespace               = var.nomad_namespace
-    consul_tags             = join(",", var.consul_tags)
+    service_tags            = jsonencode(var.service_tags)
+    update_health_check     = var.update_health_check
     image                   = var.container_image
+    entrypoints             = jsonencode(var.container_entrypoints)
+    command                 = var.container_command
+    command_args            = jsonencode(var.container_command_args)
     port                    = var.container_port
+    job_extra               = var.nomad_job_extra
+    group_extra             = var.nomad_group_extra
+    task_extra              = var.nomad_task_extra
+    docker_config_extra     = var.nomad_docker_config_extra
+    use_static_port         = var.use_static_port
     username                = var.admin_user
     password                = var.admin_password
     use_vault_provider      = var.vault_secret.use_vault_provider
@@ -26,17 +34,19 @@ data "template_file" "template_nomad_job_postgres" {
     vault_kv_field_username = var.vault_secret.vault_kv_field_username
     vault_kv_field_password = var.vault_secret.vault_kv_field_password
     database                = var.database
+    nomad_network_mode      = var.nomad_network_mode
+    nomad_docker_network_mode = var.nomad_docker_network_mode
+    nomad_host_network      = var.nomad_host_network
     nomad_host_volume       = var.nomad_host_volume
+    nomad_csi_volume        = var.nomad_csi_volume
+    nomad_csi_volume_extra  = var.nomad_csi_volume_extra
     volume_destination      = var.volume_destination
-    use_host_volume         = var.use_host_volume
     use_canary              = var.use_canary
+    use_connect             = var.use_connect
     memory                  = var.memory
     cpu                     = var.cpu
     envs                    = local.postgres_env_vars
-  }
-}
-
-resource "nomad_job" "nomad_job_postgres" {
-  jobspec = data.template_file.template_nomad_job_postgres.rendered
-  detach  = false
+    pg_isready_path         = var.pg_isready_path
+  })
+  detach = false
 }

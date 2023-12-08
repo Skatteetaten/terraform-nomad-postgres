@@ -47,7 +47,7 @@ You can verify that Postgres is running by checking the connection. The followin
 make proxy
 ```
 
-Further, you can verify the connection by connecting with the psql CLI ([required software](#required-software)) using the command bellow.
+Further, you can verify the connection by connecting with the psql CLI ([required software](#required-software)) using the command below.
 You can find the `username` and `password` in the [Vault UI (localhost:8200)](http://localhost:8200/).
 ```sh
 psql "dbname=metastore host=127.0.0.1 user=<username> password=<password> port=5432 sslmode=disable"
@@ -84,6 +84,7 @@ module "postgres" {
   vault_secret                    = {
                                       use_vault_provider      = false,
                                       vault_kv_path           = "",
+                                      vault_kv_policy_name    = "",
                                       vault_kv_field_username = "",
                                       vault_kv_field_password = ""
                                     }
@@ -91,7 +92,7 @@ module "postgres" {
   admin_password                  = "postgres"
   database                        = "metastore"
   volume_destination              = "/var/lib/postgresql/data"
-  use_host_volume                 = true
+  nomad_host_volume               = "/local/postgres"
   use_canary                      = false
   container_environment_variables = ["PGDATA=/var/lib/postgresql/data/"]
 }
@@ -100,21 +101,37 @@ module "postgres" {
 ## Inputs
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| nomad_datacenters | Nomad data centers | list(string) | ["dc1"] | no |
+| nomad_datacenters | Nomad data centers | list(string) | ["*"] | no |
 | nomad_namespace | [Enterprise] Nomad namespace | string | "default" | no |
-| nomad_host_volume | Nomad host volume name | string | "persistence" | no |
-| consul_tags | List of one or more tags to announce in Consul, for service discovery purposes | list(string) | [""] | no |
+| nomad_host_volume | Nomad host volume name | string | "" | no |
+| nomad_csi_volume | Nomad CSI volume name to mount | string | "" | no |
+| nomad_csi_volume_extra | Extra config to inject in Nomad's CSI volume stanza | string | "" | no |
+| nomad_job_extra | Extra config to inject in Nomad's job config stanza | string | "" | no |
+| nomad_group_extra | Extra config to inject in Nomad's group config stanza | string | "" | no |
+| nomad_task_extra | Extra config to inject in Nomad's task config stanza | string | "" | no |
+| nomad_docker_config_extra | Extra config to inject in Nomad's docker config stanza | string | "" | no |
+| nomad_host_network | Nomad `network.port["psql"].host_network` | string | "" | no |
+| nomad_network_mode | Nomad `network.network_mode` | string | "" | no |
+| nomad_docker_network_mode | Postgres task Docker `config.network_mode` | string | "" | no |
+| update_health_check | Nomad `update.health_check` | string | "checks" | no |
+| service_tags | List of one or more tags to announce in Consul / Nomad, for service discovery purposes | list(string) | [""] | no |
 | service_name | Postgres service name | string | "postgres" | no |
-| container_port | Postgres port | number | 5432 | no |
 | container_image | Postgres docker image | string | "postgres:12-alpine" | no |
+| container_entrypoints | Docker driver entrypoint array | list(string) | no |
+| container_command | Docker driver command string | string | no |
+| container_command_args | Docker driver command args array | list(string) | no |
+| container_port | Postgres port | number | 5432 | no |
+| use_static_port | Switch to make container_port static | bool | false | no |
 | admin_user | Postgres admin username | string | "postgres" | no |
 | admin_password | Postgres admin password | string | "postgres" | no |
 | database | Postgres database name | string | "metastore" | no |
+| pg_isready_path | Path to `pg_isready` script for health checks" | string | "/usr/local/bin/pg_isready" | no |
 | container_environment_variables | Postgres container environement variables | list(string) | ["PGDATA=/var/lib/postgresql/data"] | no |
 | volume_destination | Postgres volume destination | string | "/var/lib/postgresql/data" | no |
 | use_host_volume | Use nomad host volume | bool | false | no |
-| use_canary | Switch to use canary deployment for Postgres | bool | no |
-| vault_secret.use_vault_provider | Set if want to access secrets from Vault | bool | true | no |
+| use_canary | Switch to use canary deployment for Postgres | bool | true | no |
+| use_connect | Use Consul Connect | bool | true | no |
+| vault_secret.use_vault_provider | Set if want to access secrets from Vault | bool | false | no |
 | vault_secret.vault_kv_policy_name | Vault policy name to read secrets | string | "kv-secret" | no |
 | vault_secret.vault_kv_path | Path to the secret key in Vault | string | "secret/data/postgres" | no |
 | vault_secret.vault_kv_field_username | Secret key name in Vault kv path | string | "username" | no |
@@ -122,7 +139,8 @@ module "postgres" {
 | memory | Memory allocation for Postgres in MB | number | 428 | no |
 | cpu | CPU allocation for Postgres in MHz | number | 350 | no |
 | resource_proxy | Resource allocations for proxy | obj(number, number) |	{ <br> cpu = 200, <br> memory = 128 <br> } |	no |
- 	
+
+
 ## Outputs
 | Name | Description | Type |
 |------|-------------|------|
@@ -157,7 +175,7 @@ module "postgres" {
 ### Set credentials using Vault secrets
 By default `use_vault_provider` is set to `false`. 
 However, when testing using the box (e.g. `make dev`) the postgres username and password is randomly generated and put in `secret/postgres` inside Vault, from the [01_generate_secrets_vault.yml](dev/ansible/01_generate_secrets_vault.yml) playbook. 
-This is an independet process and will run regardless of the `vault_secret.use_vault_provider` is `false/true`. 
+This is an independent process and will run regardless of the `vault_secret.use_vault_provider` is `false/true`.
 
 If you want to use the automatically generated credentials in the box, you can do so by changing the `vault_secret` object as seen below:
 ```hcl-terraform

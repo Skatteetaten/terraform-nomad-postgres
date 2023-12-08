@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.5.0]
+
+### BREAKING
+ - The `use_host_volume` flag is removed and now triggered by setting `nomad_host_volume`.
+   Previously, `nomad_host_volume` defaulted to `"persistence"`, but now defaults to `""`.
+
+### Changed
+- Updated to work with Terraform >1.0
+- Fixed `consul_tags` rendering of multiple tags
+- Fixed `nomad_datacenters` rendering of multiple datacenters
+- `nomad_datacenters` now defaults to the Nomad default of `["*"]`
+- Port assignments are now done via the `network` stanza instead of `service` stanza
+- Less extraneous whitespace in the generated Nomad job file
+
+### Added
+- Added `container_entrypoints`, `container_command`, and `container_command_args` to customize container launch
+- Added `nomad_job_extra`, `nomad_group_extra`, and `nomad_task_extra`, and `nomad_docker_config_extra` to customize job template
+- Added `use_static_port` to make the `container_port` be a static port
+- Added `use_connect` to make Consul Connect optional, default to `true` for backwards compatibility
+- Added `pg_isready_path` to customize the path to `pg_isready` health check script
+- Added `nomad_csi_volume` and `nomad_csi_volume_extra` to support mounting CSI volumes (such as NFS!)
+
 ## [0.4.2]
 
 ## Changed

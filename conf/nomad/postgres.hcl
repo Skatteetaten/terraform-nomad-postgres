@@ -1,11 +1,11 @@
 job "${service_name}" {
   type        = "service"
-  datacenters = "${datacenters}"
+  datacenters = ${datacenters}
   namespace   = "${namespace}"
 
   update {
     max_parallel      = 1
-    health_check      = "checks"
+    health_check      = "${update_health_check}"
     min_healthy_time  = "10s"
     healthy_deadline  = "10m"
     progress_deadline = "12m"
@@ -19,34 +19,54 @@ job "${service_name}" {
 
   group "database" {
     network {
-      mode = "bridge"
+      %{~ if nomad_network_mode != "" ~}
+      mode = "${nomad_network_mode}"
+      %{~ endif ~}
+      port "psql" {
+      %{~ if nomad_host_network != "" ~}
+        host_network = "${nomad_host_network}"
+      %{~ endif ~}
+      %{~ if use_static_port ~}
+        static = ${port}
+      %{~ else ~}
+        to = ${port}
+      %{~ endif ~}
+      }
     }
 
-  %{ if use_host_volume }
+  %{~ if nomad_host_volume != "" ~}
     volume "persistence" {
       type      = "host"
       source    = "${nomad_host_volume}"
       read_only = false
     }
-  %{ endif }
+  %{~ endif }
+  %{~ if nomad_csi_volume != "" && nomad_host_volume == "" ~}
+    volume "persistence" {
+      type      = "csi"
+      source    = "${nomad_csi_volume}"
+      read_only = false
+    %{~ if nomad_csi_volume_extra != "" ~}
+${nomad_csi_volume_extra}
+    %{~ endif ~}
+    }
+  %{~ endif ~}
 
     service {
+      provider = "${service_provider}"
       name = "${service_name}"
-      port = "${port}"
-      tags = ["${consul_tags}"]
+      port = "psql"
+      tags = ${service_tags}
+      %{~ if service_provider == "consul" ~}
       check {
         type      = "script"
         task      = "postgresql"
-        command   = "/usr/local/bin/pg_isready"
-      %{ if use_vault_provider }
-        args      = ["-U", "$POSTGRES_USER"]
-      %{ else }
-        args      = ["-U", "${username}"]
-      %{ endif }
+        command   = "${pg_isready_path}"
         interval  = "30s"
         timeout   = "2s"
       }
-
+      %{~ endif ~}
+      %{ if use_connect }
       connect {
         sidecar_service {
         }
@@ -58,26 +78,49 @@ job "${service_name}" {
           }
         }
       }
+      %{ endif }
     }
 
     task "postgresql" {
       driver = "docker"
-    %{ if use_vault_provider }
+    %{~ if use_vault_provider ~}
       vault {
         policies = "${vault_kv_policy_name}"
       }
-    %{ endif }
+    %{~ endif ~}
 
-    %{ if use_host_volume }
+    %{~ if nomad_host_volume != "" ~}
       volume_mount {
         volume      = "persistence"
         destination = "${volume_destination}"
         read_only   = false
       }
-    %{ endif }
+    %{~ endif ~}
+    %{~ if nomad_csi_volume != "" && nomad_host_volume == "" ~}
+      volume_mount {
+        volume      = "persistence"
+        destination = "${volume_destination}"
+        read_only   = false
+      }
+    %{ endif ~}
 
       config {
-        image = "${image}"
+        image      = "${image}"
+      %{~ if entrypoints != "[]" ~}
+        entrypoint = ${entrypoints}
+      %{~ endif ~}
+      %{~ if command != "" ~}
+        command    = "${command}"
+      %{~ endif ~}
+      %{~ if command_args != "[]" ~}
+        args       = ${command_args}
+      %{~ endif ~}
+      %{~ if nomad_docker_network_mode != "" ~}
+        network_mode = "${nomad_docker_network_mode}"
+      %{~ endif ~}
+      %{~ if docker_config_extra != "" ~}
+${docker_config_extra}
+      %{~ endif ~}
       }
 
       logs {
@@ -95,10 +138,10 @@ job "${service_name}" {
 POSTGRES_USER="{{ .Data.data.${vault_kv_field_username} }}"
 POSTGRES_PASSWORD="{{ .Data.data.${vault_kv_field_password} }}"
 {{ end }}
-%{ else }
+%{ else ~}
 POSTGRES_USER="${username}"
 POSTGRES_PASSWORD="${password}"
-%{ endif }
+%{ endif ~}
 ${envs}
 EOF
       }
@@ -107,6 +150,12 @@ EOF
         memory = "${memory}"
         cpu    = "${cpu}"
       }
+    %{~ if task_extra != "" ~}
+${task_extra}
+    %{~ endif ~}
     }
+  %{~ if group_extra != "" ~}
+${group_extra}
+  %{~ endif ~}
   }
 }
